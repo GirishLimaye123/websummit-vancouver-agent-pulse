@@ -4,9 +4,9 @@ A fast hallway pulse-check app for GovAI.fm conversations at Web Summit Vancouve
 
 Open `index.html` in a browser to run the app. It records local, on-device responses across four AI agent camps. People can pick one or more:
 
-- Agent Maximalist
+- Full Speed
 - Hype > ROI
-- Too Dangerous
-- Wrong Architecture
+- Hazard Ahead
+- Dead End + Detour
 
 The app also includes a lightweight follow-up prompt: "Why? Explain the read."
