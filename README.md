@@ -14,3 +14,5 @@ The app also includes a lightweight follow-up prompt: "Why? Explain the read."
 `compass.html` is a cleaner one-visual variant where the quadrant map is the tappable interaction.
 
 `alternatives.html` shows three visual directions side by side: Compass, Road Signs, and Odds Board.
+
+The root app now uses a tappable 2x2 quadrant with market-style actions: Buy, Short, Hedge, and Rotate.
