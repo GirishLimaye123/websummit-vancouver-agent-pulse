@@ -2,12 +2,11 @@
 
 A fast hallway pulse-check app for GovAI.fm conversations at Web Summit Vancouver 2026.
 
-Open `index.html` in a browser to run the app. It records local, on-device votes for four AI agent camps:
+Open `index.html` in a browser to run the app. It records local, on-device responses across four AI agent camps. People can pick one or more:
 
 - Agent Maximalist
 - Hype > ROI
 - Too Dangerous
 - Wrong Architecture
 
-The app also includes a one-line follow-up prompt: "What would make you switch?"
-
+The app also includes a lightweight follow-up prompt: "Why? Explain the read."

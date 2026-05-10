@@ -154,16 +154,16 @@
     .cards {
       margin-top: clamp(28px, 4vw, 44px);
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 14px;
     }
 
     .camp {
-      min-height: 250px;
+      min-height: 176px;
       border: 3px solid var(--ink);
       background: var(--white);
       display: grid;
-      grid-template-columns: 128px minmax(0, 1fr);
+      grid-template-columns: minmax(128px, 180px) minmax(0, 1fr);
       cursor: pointer;
       text-align: left;
       box-shadow: 8px 8px 0 rgba(23, 23, 23, .14);
@@ -210,17 +210,17 @@
     .camp-title {
       display: block;
       color: var(--accent);
-      font-size: clamp(23px, 2.8vw, 32px);
+      font-size: clamp(27px, 3.1vw, 38px);
       line-height: .94;
       font-weight: 1000;
       text-transform: uppercase;
-      overflow-wrap: normal;
+      overflow-wrap: anywhere;
     }
 
     .camp-line {
       display: block;
       color: #555b61;
-      font-size: clamp(16px, 2.1vw, 22px);
+      font-size: clamp(17px, 2vw, 23px);
       line-height: 1.12;
       font-weight: 760;
     }
@@ -470,6 +470,25 @@
         flex-direction: column;
       }
     }
+
+    @media (min-width: 1500px) {
+      .shell {
+        max-width: 1420px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .camp {
+        min-height: 250px;
+        grid-template-columns: 132px minmax(0, 1fr);
+      }
+
+      .camp-title {
+        font-size: clamp(23px, 1.8vw, 32px);
+      }
+    }
   </style>
 </head>
 <body>
@@ -488,7 +507,7 @@
         <section class="stage" aria-labelledby="question">
           <div class="eyebrow"><span>WebSummit Vancouver 2026</span><span>Agent Pulse</span></div>
           <h1 id="question">AI Agents?</h1>
-          <p class="prompt">What’s your bet? Pick a camp, then tell me what would make you switch.</p>
+          <p class="prompt">What’s your bet? Pick one or more camps, then add the why if they have a take.</p>
 
           <div class="cards" id="cards" aria-label="AI agent camps">
             <button class="camp" data-id="maximalist" style="--accent: var(--red)">
@@ -545,10 +564,10 @@
           </section>
 
           <section class="switch-panel">
-            <label for="switcher">What would make you switch?</label>
-            <textarea id="switcher" placeholder="One sentence. No manifesto required."></textarea>
+            <label for="switcher">Why? Explain the read.</label>
+            <textarea id="switcher" placeholder="Optional: quote, caveat, or one-line reason."></textarea>
             <div class="action-row">
-              <button class="primary" id="saveNote">Save Note</button>
+              <button class="primary" id="recordResponse">Record</button>
               <button class="secondary" id="clearNote">Clear</button>
             </div>
             <div class="flash" id="flash"></div>
@@ -557,7 +576,7 @@
       </main>
 
       <footer class="footer">
-        <span>Made for fast hallway conversations. Tap a card to record a vote.</span>
+        <span>Made for fast hallway conversations. Pick one or more camps, then record the response.</span>
         <span>Data stays on this device.</span>
       </footer>
     </div>
@@ -566,7 +585,7 @@
   <div class="modal" id="confirmReset" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
     <div class="modal-card">
       <h2 id="resetTitle">Reset the pulse?</h2>
-      <p>This clears the local vote tally and saved switch notes on this device.</p>
+      <p>This clears the local response tally and saved notes on this device.</p>
       <div class="action-row">
         <button class="primary" id="confirmResetBtn">Reset</button>
         <button class="secondary" id="cancelResetBtn">Cancel</button>
@@ -585,6 +604,7 @@
     const storeKey = "govai-agent-pulse-v1";
     const defaultState = {
       votes: Object.fromEntries(camps.map(camp => [camp.id, 0])),
+      responses: 0,
       history: [],
       notes: []
     };
@@ -597,7 +617,7 @@
       reset: document.getElementById("reset"),
       present: document.getElementById("present"),
       switcher: document.getElementById("switcher"),
-      saveNote: document.getElementById("saveNote"),
+      recordResponse: document.getElementById("recordResponse"),
       clearNote: document.getElementById("clearNote"),
       flash: document.getElementById("flash"),
       confirmReset: document.getElementById("confirmReset"),
@@ -605,13 +625,18 @@
       cancelResetBtn: document.getElementById("cancelResetBtn")
     };
 
-    let selectedCamp = null;
+    let selectedCamps = new Set();
     let state = loadState();
 
     function loadState() {
       try {
         const parsed = JSON.parse(localStorage.getItem(storeKey));
-        return parsed ? { ...defaultState, ...parsed } : structuredClone(defaultState);
+        if (!parsed) return structuredClone(defaultState);
+        return {
+          ...defaultState,
+          ...parsed,
+          responses: parsed.responses ?? parsed.history?.length ?? 0
+        };
       } catch {
         return structuredClone(defaultState);
       }
@@ -622,11 +647,11 @@
     }
 
     function renderBars() {
-      const totalVotes = Object.values(state.votes).reduce((sum, value) => sum + value, 0);
+      const totalResponses = state.responses || 0;
       els.bars.innerHTML = "";
       camps.forEach(camp => {
         const count = state.votes[camp.id] || 0;
-        const pct = totalVotes ? Math.round((count / totalVotes) * 100) : 0;
+        const pct = totalResponses ? Math.round((count / totalResponses) * 100) : 0;
         const row = document.createElement("div");
         row.className = "bar-row";
         row.style.setProperty("--accent", camp.accent);
@@ -636,22 +661,49 @@
         `;
         els.bars.appendChild(row);
       });
-      els.total.innerHTML = `${totalVotes}<span>votes captured</span>`;
+      els.total.innerHTML = `${totalResponses}<span>responses captured</span>`;
     }
 
-    function vote(id) {
-      selectedCamp = id;
-      state.votes[id] = (state.votes[id] || 0) + 1;
-      state.history.push(id);
-      saveState();
-      renderBars();
+    function toggleCamp(id) {
+      if (selectedCamps.has(id)) {
+        selectedCamps.delete(id);
+      } else {
+        selectedCamps.add(id);
+      }
       markSelected();
-      flash(`${camps.find(camp => camp.id === id).label} recorded.`);
-      els.switcher.focus({ preventScroll: true });
+      const count = selectedCamps.size;
+      flash(count ? `${count} camp${count === 1 ? "" : "s"} selected.` : "No camps selected.");
     }
 
     function markSelected() {
-      els.cards.forEach(card => card.classList.toggle("selected", card.dataset.id === selectedCamp));
+      els.cards.forEach(card => card.classList.toggle("selected", selectedCamps.has(card.dataset.id)));
+    }
+
+    function recordResponse() {
+      const ids = Array.from(selectedCamps);
+      const note = els.switcher.value.trim();
+      if (!ids.length) {
+        flash("Pick at least one camp first.");
+        return;
+      }
+      ids.forEach(id => {
+        state.votes[id] = (state.votes[id] || 0) + 1;
+      });
+      state.responses += 1;
+      state.history.push(ids);
+      if (note) {
+        state.notes.push({
+          camps: ids,
+          note,
+          createdAt: new Date().toISOString()
+        });
+      }
+      selectedCamps.clear();
+      els.switcher.value = "";
+      saveState();
+      renderBars();
+      markSelected();
+      flash(`Response recorded: ${ids.map(id => camps.find(camp => camp.id === id).label).join(", ")}.`);
     }
 
     function flash(message) {
@@ -663,21 +715,25 @@
     }
 
     els.cards.forEach(card => {
-      card.addEventListener("click", () => vote(card.dataset.id));
+      card.addEventListener("click", () => toggleCamp(card.dataset.id));
     });
 
     els.undo.addEventListener("click", () => {
       const last = state.history.pop();
       if (!last) {
-        flash("No vote to undo.");
+        flash("No response to undo.");
         return;
       }
-      state.votes[last] = Math.max(0, (state.votes[last] || 0) - 1);
-      selectedCamp = null;
+      const ids = Array.isArray(last) ? last : [last];
+      ids.forEach(id => {
+        state.votes[id] = Math.max(0, (state.votes[id] || 0) - 1);
+      });
+      state.responses = Math.max(0, (state.responses || 0) - 1);
+      selectedCamps.clear();
       saveState();
       renderBars();
       markSelected();
-      flash("Last vote removed.");
+      flash("Last response removed.");
     });
 
     els.reset.addEventListener("click", () => {
@@ -690,7 +746,7 @@
 
     els.confirmResetBtn.addEventListener("click", () => {
       state = structuredClone(defaultState);
-      selectedCamp = null;
+      selectedCamps.clear();
       els.switcher.value = "";
       saveState();
       renderBars();
@@ -707,21 +763,7 @@
       }
     });
 
-    els.saveNote.addEventListener("click", () => {
-      const note = els.switcher.value.trim();
-      if (!note) {
-        flash("Add a switch reason first.");
-        return;
-      }
-      state.notes.push({
-        camp: selectedCamp,
-        note,
-        createdAt: new Date().toISOString()
-      });
-      saveState();
-      els.switcher.value = "";
-      flash("Switch reason saved.");
-    });
+    els.recordResponse.addEventListener("click", recordResponse);
 
     els.clearNote.addEventListener("click", () => {
       els.switcher.value = "";
@@ -734,7 +776,10 @@
       }
       const n = Number(event.key);
       if (n >= 1 && n <= 4) {
-        vote(camps[n - 1].id);
+        toggleCamp(camps[n - 1].id);
+      }
+      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+        recordResponse();
       }
     });
 
