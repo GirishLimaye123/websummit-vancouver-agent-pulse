@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GovAI.fm Web Summit Question</title>
+  <style>
+    :root {
+      --ink: #171717;
+      --muted: #5b6168;
+      --paper: #f7f3ea;
+      --line: #d8d0c1;
+      --red: #d7443e;
+      --blue: #246a8f;
+      --green: #3b7a57;
+      --gold: #b37521;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #e7e0d3;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .flyer {
+      width: 1080px;
+      min-height: 1920px;
+      margin: 0 auto;
+      padding: 68px 64px 54px;
+      background:
+        linear-gradient(90deg, rgba(23,23,23,.035) 1px, transparent 1px) 0 0 / 54px 54px,
+        linear-gradient(rgba(23,23,23,.035) 1px, transparent 1px) 0 0 / 54px 54px,
+        var(--paper);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 22px;
+      font-size: 26px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .brand {
+      display: inline-flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border: 3px solid var(--ink);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 900;
+      background: #fff;
+    }
+
+    h1 {
+      margin: 62px 0 24px;
+      max-width: 940px;
+      font-size: 94px;
+      line-height: .95;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .subhead {
+      max-width: 900px;
+      margin: 0 0 54px;
+      font-size: 38px;
+      line-height: 1.18;
+      font-weight: 650;
+      color: #2b2b2b;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: #fffaf0;
+      border: 3px solid var(--ink);
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 10px 10px 0 rgba(23,23,23,.16);
+    }
+
+    .photo-wrap {
+      height: 282px;
+      border-bottom: 3px solid var(--ink);
+      position: relative;
+      overflow: hidden;
+      background: #ddd;
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(.08) contrast(1.06);
+    }
+
+    .photo-wrap.dario img { object-position: 50% 28%; }
+    .photo-wrap.gary img { object-position: 50% 25%; }
+    .photo-wrap.yann img { object-position: 50% 18%; }
+    .photo-wrap.hinton img { object-position: 50% 30%; }
+
+    .tag {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      padding: 8px 13px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .card-body {
+      padding: 24px 24px 26px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .name {
+      font-size: 36px;
+      font-weight: 920;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .thesis {
+      font-size: 31px;
+      line-height: 1.08;
+      font-weight: 850;
+      margin-bottom: 18px;
+    }
+
+    .read {
+      margin-top: auto;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1.18;
+      font-weight: 600;
+    }
+
+    .accent-red { color: var(--red); }
+    .accent-blue { color: var(--blue); }
+    .accent-green { color: var(--green); }
+    .accent-gold { color: var(--gold); }
+
+    .closer {
+      margin-top: 48px;
+      border: 3px solid var(--ink);
+      background: #171717;
+      color: #fff;
+      padding: 34px 38px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .closer-main {
+      font-size: 42px;
+      line-height: 1.04;
+      font-weight: 900;
+    }
+
+    .closer-side {
+      width: 260px;
+      font-size: 24px;
+      line-height: 1.14;
+      font-weight: 750;
+      color: #f4ddae;
+    }
+
+    .sources {
+      margin-top: 34px;
+      border-top: 2px solid var(--line);
+      padding-top: 18px;
+      color: #6f675a;
+      font-size: 17px;
+      line-height: 1.25;
+      font-weight: 560;
+    }
+
+    @media (max-width: 900px) {
+      .flyer {
+        width: 100vw;
+        min-height: 100vh;
+        padding: 36px 24px 30px;
+      }
+
+      h1 { font-size: 54px; }
+      .subhead { font-size: 25px; }
+      .grid { grid-template-columns: 1fr; }
+      .closer { grid-template-columns: 1fr; }
+      .closer-side { width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="flyer">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark">G</span><span>GovAI.fm</span></div>
+      <div>Web Summit</div>
+    </div>
+
+    <h1>Which AI camp are you in?</h1>
+    <p class="subhead">Is the revolution already here, mostly hype, waiting for a new architecture, or risky enough to slow down?</p>
+
+    <section class="grid" aria-label="AI camps">
+      <article class="card">
+        <div class="photo-wrap dario">
+          <img src="assets/dario.jpg" alt="Dario Amodei">
+          <div class="tag">Diffusion</div>
+        </div>
+        <div class="card-body">
+          <div class="name">Dario</div>
+          <div class="thesis accent-red">The tech is basically here.</div>
+          <div class="read">The bottleneck is whether institutions, markets, and governments absorb it fast enough.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="photo-wrap gary">
+          <img src="assets/gary.jpg" alt="Gary Marcus">
+          <div class="tag">Overhype</div>
+        </div>
+        <div class="card-body">
+          <div class="name">Gary</div>
+          <div class="thesis accent-blue">LLMs hit a ceiling.</div>
+          <div class="read">Useful for coding and demos, but brittle without reasoning, world models, or neuro-symbolic systems.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="photo-wrap yann">
+          <img src="assets/yann.jpg" alt="Yann LeCun">
+          <div class="tag">Architecture</div>
+        </div>
+        <div class="card-body">
+          <div class="name">Yann</div>
+          <div class="thesis accent-green">LLMs are not the endgame.</div>
+          <div class="read">Better neural systems, world models, and JEPA-style architectures are the path to real intelligence.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="photo-wrap hinton">
+          <img src="assets/hinton.jpg" alt="Geoffrey Hinton">
+          <div class="tag">Risk</div>
+        </div>
+        <div class="card-body">
+          <div class="name">Hinton</div>
+          <div class="thesis accent-gold">Capabilities are real enough to scare us.</div>
+          <div class="read">The issue is not just productivity. It is control, misuse, and whether we should slow the race.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="closer">
+      <div class="closer-main">Pick one. Then tell me: what would make you switch camps?</div>
+      <div class="closer-side">A GovAI.fm field question for builders, regulators, investors, and skeptics.</div>
+    </section>
+
+    <footer class="sources">
+      Position shorthand based on public writing/interviews from Anthropic/Dario Amodei, Gary Marcus, Meta AI/Yann LeCun JEPA work, and Geoffrey Hinton AI risk commentary. Portrait credits: TechCrunch/Wikimedia Commons; Web Summit/Wikimedia Commons; DATAIA/Wikimedia Commons; Nobel Prize Outreach/Wikimedia Commons.
+    </footer>
+  </main>
+</body>
+</html>

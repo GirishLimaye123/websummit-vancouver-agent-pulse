@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101114">
+      <title>WebSummit Vancouver 2026 Agent Pulse</title>
+  <style>
+    :root {
+      --bg: #101114;
+      --panel: #f8f1e6;
+      --ink: #171717;
+      --muted: #6c6255;
+      --line: rgba(23, 23, 23, .2);
+      --red: #df4d45;
+      --blue: #267298;
+      --gold: #bd7c23;
+      --green: #477d58;
+      --white: #fffaf1;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, textarea { font: inherit; }
+
+    .app {
+      min-height: 100svh;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(223, 77, 69, .18), transparent 28rem),
+        radial-gradient(circle at 85% 0%, rgba(38, 114, 152, .2), transparent 30rem),
+        linear-gradient(135deg, #111216 0%, #201c18 100%);
+      padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
+    }
+
+    .shell {
+      max-width: 1180px;
+      min-height: calc(100svh - 36px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+    }
+
+    .topbar {
+      color: #f8ead2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-size: clamp(14px, 2.2vw, 21px);
+    }
+
+    .mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      background: #f8ead2;
+      color: #111216;
+      border: 2px solid #f8ead2;
+      font-weight: 1000;
+    }
+
+    .tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      min-width: 42px;
+      height: 42px;
+      border: 1px solid rgba(248, 234, 210, .32);
+      background: rgba(248, 234, 210, .08);
+      color: #f8ead2;
+      border-radius: 8px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, .65fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .stage {
+      background:
+        linear-gradient(90deg, rgba(23,23,23,.045) 1px, transparent 1px) 0 0 / 46px 46px,
+        linear-gradient(rgba(23,23,23,.045) 1px, transparent 1px) 0 0 / 46px 46px,
+        var(--panel);
+      border: 2px solid rgba(248, 234, 210, .8);
+      border-radius: 8px;
+      padding: clamp(22px, 4vw, 48px);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .35);
+      display: flex;
+      flex-direction: column;
+      min-height: 640px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 14px;
+      margin-bottom: clamp(24px, 5vw, 42px);
+      font-size: clamp(12px, 1.7vw, 18px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(50px, 10vw, 112px);
+      line-height: .9;
+      text-transform: uppercase;
+      max-width: 860px;
+    }
+
+    .prompt {
+      margin: 18px 0 0;
+      max-width: 790px;
+      font-size: clamp(20px, 3.2vw, 36px);
+      line-height: 1.12;
+      font-weight: 780;
+      color: #2d2b28;
+    }
+
+    .cards {
+      margin-top: clamp(28px, 4vw, 44px);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .camp {
+      min-height: 250px;
+      border: 3px solid var(--ink);
+      background: var(--white);
+      display: grid;
+      grid-template-columns: 128px minmax(0, 1fr);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 8px 8px 0 rgba(23, 23, 23, .14);
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+      padding: 0;
+      overflow: hidden;
+      border-radius: 0;
+      position: relative;
+    }
+
+    .camp:active {
+      transform: translate(5px, 5px);
+      box-shadow: 3px 3px 0 rgba(23, 23, 23, .2);
+    }
+
+    .camp.selected {
+      background: #fff;
+      outline: 5px solid var(--accent);
+      outline-offset: -8px;
+    }
+
+    .camp img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(.12) contrast(1.05);
+      background: #ddd;
+    }
+
+    .camp[data-id="maximalist"] img { object-position: 50% 28%; }
+    .camp[data-id="roi"] img { object-position: 52% 28%; }
+    .camp[data-id="danger"] img { object-position: 50% 30%; }
+    .camp[data-id="architecture"] img { object-position: 50% 18%; }
+
+    .camp-copy {
+      padding: 18px 18px 18px 20px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .camp-title {
+      display: block;
+      color: var(--accent);
+      font-size: clamp(23px, 2.8vw, 32px);
+      line-height: .94;
+      font-weight: 1000;
+      text-transform: uppercase;
+      overflow-wrap: normal;
+    }
+
+    .camp-line {
+      display: block;
+      color: #555b61;
+      font-size: clamp(16px, 2.1vw, 22px);
+      line-height: 1.12;
+      font-weight: 760;
+    }
+
+    .camp-name {
+      color: var(--ink);
+      font-size: 13px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      font-weight: 950;
+    }
+
+    .side {
+      display: grid;
+      gap: 18px;
+      grid-template-rows: auto 1fr;
+    }
+
+    .result-panel, .switch-panel {
+      border-radius: 8px;
+      border: 1px solid rgba(248, 234, 210, .25);
+      background: rgba(248, 241, 230, .09);
+      color: #f8ead2;
+      padding: 22px;
+      backdrop-filter: blur(16px);
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 14px;
+    }
+
+    .bars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      gap: 7px;
+    }
+
+    .bar-meta {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 850;
+      font-size: 15px;
+    }
+
+    .track {
+      height: 14px;
+      background: rgba(248, 234, 210, .16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width .28s ease;
+    }
+
+    .total {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(248, 234, 210, .22);
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 1000;
+    }
+
+    .total span {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(248, 234, 210, .72);
+    }
+
+    .switch-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .switch-panel label {
+      font-size: 22px;
+      line-height: 1.08;
+      font-weight: 950;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 142px;
+      resize: vertical;
+      border: 1px solid rgba(248, 234, 210, .35);
+      background: rgba(0, 0, 0, .2);
+      color: #fff8eb;
+      border-radius: 8px;
+      padding: 14px;
+      line-height: 1.24;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #f8ead2;
+      box-shadow: 0 0 0 3px rgba(248, 234, 210, .12);
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .primary, .secondary {
+      border: 0;
+      min-height: 48px;
+      border-radius: 8px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #f8ead2;
+      color: #111216;
+    }
+
+    .secondary {
+      background: transparent;
+      color: #f8ead2;
+      border: 1px solid rgba(248, 234, 210, .3);
+    }
+
+    .flash {
+      min-height: 24px;
+      color: #f8ead2;
+      opacity: .82;
+      font-size: 14px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .footer {
+      color: rgba(248, 234, 210, .7);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(6, 6, 8, .72);
+      z-index: 10;
+    }
+
+    .modal.open { display: grid; }
+
+    .modal-card {
+      width: min(620px, 100%);
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      padding: 26px;
+      box-shadow: 14px 14px 0 rgba(0, 0, 0, .28);
+    }
+
+    .modal-card h2 {
+      margin: 0 0 12px;
+      font-size: clamp(32px, 7vw, 58px);
+      line-height: .92;
+      text-transform: uppercase;
+    }
+
+    .modal-card p {
+      margin: 0 0 18px;
+      font-size: 20px;
+      line-height: 1.18;
+      font-weight: 750;
+      color: #3d3933;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: auto;
+      }
+
+      .side {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .tools {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .stage {
+        padding: 20px 14px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .camp {
+        grid-template-columns: 104px minmax(0, 1fr);
+        min-height: 190px;
+        box-shadow: 6px 6px 0 rgba(23, 23, 23, .14);
+      }
+
+      .camp-copy {
+        padding: 14px;
+      }
+
+      .footer {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand"><span class="mark">G</span><span>GovAI.fm Field Question</span></div>
+        <div class="tools" aria-label="Tools">
+          <button class="icon-btn" id="present" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+          <button class="icon-btn" id="undo" title="Undo last vote" aria-label="Undo last vote">↶</button>
+          <button class="icon-btn" id="reset" title="Reset tally" aria-label="Reset tally">×</button>
+        </div>
+      </header>
+
+      <main class="hero">
+        <section class="stage" aria-labelledby="question">
+          <div class="eyebrow"><span>WebSummit Vancouver 2026</span><span>Agent Pulse</span></div>
+          <h1 id="question">AI Agents?</h1>
+          <p class="prompt">What’s your bet? Pick a camp, then tell me what would make you switch.</p>
+
+          <div class="cards" id="cards" aria-label="AI agent camps">
+            <button class="camp" data-id="maximalist" style="--accent: var(--red)">
+              <img src="assets/dario.jpg" alt="Dario Amodei">
+              <span class="camp-copy">
+                <span>
+                  <span class="camp-title">Agent Maximalist</span>
+                  <span class="camp-line">Agents could reshape work, productivity, and GDP soon.</span>
+                </span>
+                <span class="camp-name">Dario camp</span>
+              </span>
+            </button>
+
+            <button class="camp" data-id="roi" style="--accent: var(--blue)">
+              <img src="assets/gary.jpg" alt="Gary Marcus">
+              <span class="camp-copy">
+                <span>
+                  <span class="camp-title">Hype &gt; ROI</span>
+                  <span class="camp-line">Lots of hype, not so much ROI.</span>
+                </span>
+                <span class="camp-name">Gary camp</span>
+              </span>
+            </button>
+
+            <button class="camp" data-id="danger" style="--accent: var(--gold)">
+              <img src="assets/hinton.jpg" alt="Geoffrey Hinton">
+              <span class="camp-copy">
+                <span>
+                  <span class="camp-title">Too Dangerous</span>
+                  <span class="camp-line">Autonomy before control creates unacceptable risk.</span>
+                </span>
+                <span class="camp-name">Hinton camp</span>
+              </span>
+            </button>
+
+            <button class="camp" data-id="architecture" style="--accent: var(--green)">
+              <img src="assets/yann.jpg" alt="Yann LeCun">
+              <span class="camp-copy">
+                <span>
+                  <span class="camp-title">Wrong Architecture</span>
+                  <span class="camp-line">LLM agents are not the path to real machine intelligence.</span>
+                </span>
+                <span class="camp-name">Yann camp</span>
+              </span>
+            </button>
+          </div>
+        </section>
+
+        <aside class="side" aria-label="Live pulse">
+          <section class="result-panel">
+            <div class="result-title">Live Tally</div>
+            <div class="bars" id="bars"></div>
+            <div class="total" id="total">0<span>votes captured</span></div>
+          </section>
+
+          <section class="switch-panel">
+            <label for="switcher">What would make you switch?</label>
+            <textarea id="switcher" placeholder="One sentence. No manifesto required."></textarea>
+            <div class="action-row">
+              <button class="primary" id="saveNote">Save Note</button>
+              <button class="secondary" id="clearNote">Clear</button>
+            </div>
+            <div class="flash" id="flash"></div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="footer">
+        <span>Made for fast hallway conversations. Tap a card to record a vote.</span>
+        <span>Data stays on this device.</span>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal" id="confirmReset" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+    <div class="modal-card">
+      <h2 id="resetTitle">Reset the pulse?</h2>
+      <p>This clears the local vote tally and saved switch notes on this device.</p>
+      <div class="action-row">
+        <button class="primary" id="confirmResetBtn">Reset</button>
+        <button class="secondary" id="cancelResetBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const camps = [
+      { id: "maximalist", label: "Agent Maximalist", accent: "#df4d45" },
+      { id: "roi", label: "Hype > ROI", accent: "#267298" },
+      { id: "danger", label: "Too Dangerous", accent: "#bd7c23" },
+      { id: "architecture", label: "Wrong Architecture", accent: "#477d58" }
+    ];
+
+    const storeKey = "govai-agent-pulse-v1";
+    const defaultState = {
+      votes: Object.fromEntries(camps.map(camp => [camp.id, 0])),
+      history: [],
+      notes: []
+    };
+
+    const els = {
+      cards: document.querySelectorAll(".camp"),
+      bars: document.getElementById("bars"),
+      total: document.getElementById("total"),
+      undo: document.getElementById("undo"),
+      reset: document.getElementById("reset"),
+      present: document.getElementById("present"),
+      switcher: document.getElementById("switcher"),
+      saveNote: document.getElementById("saveNote"),
+      clearNote: document.getElementById("clearNote"),
+      flash: document.getElementById("flash"),
+      confirmReset: document.getElementById("confirmReset"),
+      confirmResetBtn: document.getElementById("confirmResetBtn"),
+      cancelResetBtn: document.getElementById("cancelResetBtn")
+    };
+
+    let selectedCamp = null;
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(storeKey));
+        return parsed ? { ...defaultState, ...parsed } : structuredClone(defaultState);
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(storeKey, JSON.stringify(state));
+    }
+
+    function renderBars() {
+      const totalVotes = Object.values(state.votes).reduce((sum, value) => sum + value, 0);
+      els.bars.innerHTML = "";
+      camps.forEach(camp => {
+        const count = state.votes[camp.id] || 0;
+        const pct = totalVotes ? Math.round((count / totalVotes) * 100) : 0;
+        const row = document.createElement("div");
+        row.className = "bar-row";
+        row.style.setProperty("--accent", camp.accent);
+        row.innerHTML = `
+          <div class="bar-meta"><span>${camp.label}</span><span>${count} · ${pct}%</span></div>
+          <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+        `;
+        els.bars.appendChild(row);
+      });
+      els.total.innerHTML = `${totalVotes}<span>votes captured</span>`;
+    }
+
+    function vote(id) {
+      selectedCamp = id;
+      state.votes[id] = (state.votes[id] || 0) + 1;
+      state.history.push(id);
+      saveState();
+      renderBars();
+      markSelected();
+      flash(`${camps.find(camp => camp.id === id).label} recorded.`);
+      els.switcher.focus({ preventScroll: true });
+    }
+
+    function markSelected() {
+      els.cards.forEach(card => card.classList.toggle("selected", card.dataset.id === selectedCamp));
+    }
+
+    function flash(message) {
+      els.flash.textContent = message;
+      window.clearTimeout(flash.timer);
+      flash.timer = window.setTimeout(() => {
+        els.flash.textContent = "";
+      }, 2200);
+    }
+
+    els.cards.forEach(card => {
+      card.addEventListener("click", () => vote(card.dataset.id));
+    });
+
+    els.undo.addEventListener("click", () => {
+      const last = state.history.pop();
+      if (!last) {
+        flash("No vote to undo.");
+        return;
+      }
+      state.votes[last] = Math.max(0, (state.votes[last] || 0) - 1);
+      selectedCamp = null;
+      saveState();
+      renderBars();
+      markSelected();
+      flash("Last vote removed.");
+    });
+
+    els.reset.addEventListener("click", () => {
+      els.confirmReset.classList.add("open");
+    });
+
+    els.cancelResetBtn.addEventListener("click", () => {
+      els.confirmReset.classList.remove("open");
+    });
+
+    els.confirmResetBtn.addEventListener("click", () => {
+      state = structuredClone(defaultState);
+      selectedCamp = null;
+      els.switcher.value = "";
+      saveState();
+      renderBars();
+      markSelected();
+      els.confirmReset.classList.remove("open");
+      flash("Pulse reset.");
+    });
+
+    els.present.addEventListener("click", async () => {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen?.();
+      } else {
+        await document.exitFullscreen?.();
+      }
+    });
+
+    els.saveNote.addEventListener("click", () => {
+      const note = els.switcher.value.trim();
+      if (!note) {
+        flash("Add a switch reason first.");
+        return;
+      }
+      state.notes.push({
+        camp: selectedCamp,
+        note,
+        createdAt: new Date().toISOString()
+      });
+      saveState();
+      els.switcher.value = "";
+      flash("Switch reason saved.");
+    });
+
+    els.clearNote.addEventListener("click", () => {
+      els.switcher.value = "";
+      flash("Note cleared.");
+    });
+
+    window.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        els.confirmReset.classList.remove("open");
+      }
+      const n = Number(event.key);
+      if (n >= 1 && n <= 4) {
+        vote(camps[n - 1].id);
+      }
+    });
+
+    renderBars();
+  </script>
+</body>
+</html>
