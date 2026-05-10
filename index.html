@@ -217,7 +217,7 @@
     .camp-title {
       display: block;
       color: var(--accent);
-      font-size: clamp(23px, 2.7vw, 34px);
+      font-size: clamp(22px, 2vw, 25px);
       line-height: 1;
       font-weight: 1000;
       text-transform: uppercase;
@@ -890,6 +890,10 @@
         padding: 14px;
       }
 
+      .camp-title {
+        font-size: 20px;
+      }
+
       .map-panel {
         padding: 18px 14px;
       }
@@ -928,19 +932,6 @@
       .shell {
         max-width: 1420px;
       }
-
-      .cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .camp {
-        min-height: 250px;
-        grid-template-columns: 118px minmax(0, 1fr) minmax(118px, .72fr);
-      }
-
-      .camp-title {
-        font-size: clamp(23px, 1.8vw, 32px);
-      }
     }
   </style>
 </head>
@@ -967,7 +958,7 @@
               <span class="camp-photo"><img src="assets/dario.jpg" alt="Dario Amodei"></span>
               <span class="camp-copy">
                 <span>
-                  <span class="camp-title">Full Speed</span>
+                  <span class="camp-title">World Changers</span>
                   <span class="camp-line">Agents could reshape work, productivity, and GDP soon.</span>
                 </span>
                 <span class="camp-name">Dario camp · Agent maximalist</span>
@@ -984,7 +975,7 @@
               <span class="camp-photo"><img src="assets/gary.jpg" alt="Gary Marcus"></span>
               <span class="camp-copy">
                 <span>
-                  <span class="camp-title">Hype &gt;&gt; ROI</span>
+                  <span class="camp-title">Hype &gt; ROI</span>
                   <span class="camp-line">Lots of hype, not so much ROI.</span>
                 </span>
                 <span class="camp-name">Gary camp</span>
@@ -1000,7 +991,7 @@
               <span class="camp-photo"><img src="assets/hinton.jpg" alt="Geoffrey Hinton"></span>
               <span class="camp-copy">
                 <span>
-                  <span class="camp-title">Hazard Ahead</span>
+                  <span class="camp-title">Too Dangerous</span>
                   <span class="camp-line">Autonomy before control creates unacceptable risk.</span>
                 </span>
                 <span class="camp-name">Hinton camp · Control risk</span>
@@ -1016,7 +1007,7 @@
               <span class="camp-photo"><img src="assets/yann.jpg" alt="Yann LeCun"></span>
               <span class="camp-copy">
                 <span>
-                  <span class="camp-title">Dead End + Detour</span>
+                  <span class="camp-title">Wrong Architecture</span>
                   <span class="camp-line">The LLM-agent lane hits a dead end; take a new architectural route.</span>
                 </span>
                 <span class="camp-name">LeCun camp · Wrong architecture</span>
@@ -1044,10 +1035,10 @@
                 <span>Too dangerous<br>or net negative</span>
               </div>
               <div class="quadrant" aria-label="Current AI agent direction map">
-                <div class="map-dot" style="--x: 77%; --y: 25%; --accent: var(--red)"><span>Dario</span><strong>Full Speed</strong></div>
-                <div class="map-dot" style="--x: 77%; --y: 75%; --accent: var(--gold)"><span>Hinton</span><strong>Hazard</strong></div>
-                <div class="map-dot" style="--x: 25%; --y: 75%; --accent: var(--blue)"><span>Gary</span><strong>Hype &gt;&gt; ROI</strong></div>
-                <div class="map-dot" style="--x: 25%; --y: 25%; --accent: var(--green)"><span>LeCun</span><strong>Detour</strong></div>
+                <div class="map-dot" style="--x: 77%; --y: 25%; --accent: var(--red)"><span>Dario</span><strong>World Changers</strong></div>
+                <div class="map-dot" style="--x: 77%; --y: 75%; --accent: var(--gold)"><span>Hinton</span><strong>Too Dangerous</strong></div>
+                <div class="map-dot" style="--x: 25%; --y: 75%; --accent: var(--blue)"><span>Gary</span><strong>Hype &gt; ROI</strong></div>
+                <div class="map-dot" style="--x: 25%; --y: 25%; --accent: var(--green)"><span>LeCun</span><strong>Wrong Architecture</strong></div>
               </div>
             </div>
             <p class="map-note">The map is about today’s LLM-agent lane, not every possible future AI route.</p>
@@ -1091,10 +1082,10 @@
 
   <script>
     const camps = [
-      { id: "maximalist", label: "Full Speed", accent: "#df4d45" },
-      { id: "roi", label: "Hype >> ROI", accent: "#267298" },
-      { id: "danger", label: "Hazard Ahead", accent: "#bd7c23" },
-      { id: "architecture", label: "Dead End + Detour", accent: "#477d58" }
+      { id: "maximalist", label: "World Changers", accent: "#df4d45" },
+      { id: "roi", label: "Hype > ROI", accent: "#267298" },
+      { id: "danger", label: "Too Dangerous", accent: "#bd7c23" },
+      { id: "architecture", label: "Wrong Architecture", accent: "#477d58" }
     ];
 
     const storeKey = "govai-agent-pulse-v1";
