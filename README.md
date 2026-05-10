@@ -12,3 +12,5 @@ Open `index.html` in a browser to run the app. It records local, on-device respo
 The app also includes a lightweight follow-up prompt: "Why? Explain the read."
 
 `compass.html` is a cleaner one-visual variant where the quadrant map is the tappable interaction.
+
+`alternatives.html` shows three visual directions side by side: Compass, Road Signs, and Odds Board.
