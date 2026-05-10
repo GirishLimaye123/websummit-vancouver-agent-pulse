@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101114">
-      <title>WebSummit Vancouver 2026 Agent Pulse</title>
+  <title>WebSummit Vancouver 2026 Agent Pulse</title>
+  <link rel="icon" href="data:,">
   <style>
     :root {
       --bg: #101114;
@@ -216,11 +217,16 @@
     .camp-title {
       display: block;
       color: var(--accent);
-      font-size: clamp(27px, 3.1vw, 38px);
-      line-height: .94;
+      font-size: clamp(23px, 2.7vw, 34px);
+      line-height: 1;
       font-weight: 1000;
       text-transform: uppercase;
+      white-space: nowrap;
       overflow-wrap: normal;
+    }
+
+    .camp[data-id="architecture"] .camp-title {
+      white-space: normal;
     }
 
     .camp-line {
@@ -528,6 +534,8 @@
 
     .quadrant {
       position: relative;
+      grid-column: 2;
+      grid-row: 2;
       aspect-ratio: 1 / 1;
       min-height: 284px;
       border: 2px solid rgba(248, 234, 210, .5);
@@ -541,34 +549,67 @@
       overflow: hidden;
     }
 
+    .axis-frame {
+      display: grid;
+      grid-template-columns: minmax(54px, 66px) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      gap: 8px 10px;
+      align-items: stretch;
+    }
+
+    .x-axis {
+      grid-column: 2;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "title title"
+        "low high";
+      gap: 4px 8px;
+    }
+
     .axis-title {
-      position: absolute;
-      left: 50%;
-      top: 9px;
-      transform: translateX(-50%);
+      grid-area: title;
       color: rgba(248, 234, 210, .8);
       font-size: 11px;
       font-weight: 1000;
       letter-spacing: .08em;
       text-transform: uppercase;
       white-space: nowrap;
+      text-align: center;
     }
 
-    .axis-label {
-      position: absolute;
+    .axis-end,
+    .y-axis span {
       color: rgba(248, 234, 210, .72);
-      font-size: 10px;
+      font-size: 8.5px;
       font-weight: 950;
       letter-spacing: .06em;
       text-transform: uppercase;
       line-height: 1.05;
-      max-width: 100px;
     }
 
-    .axis-label.left { left: 10px; bottom: 9px; }
-    .axis-label.right { right: 10px; bottom: 9px; text-align: right; }
-    .axis-label.top { left: 10px; top: 34px; }
-    .axis-label.bottom { left: 10px; bottom: 34px; }
+    .x-axis .axis-end:not(.high) {
+      grid-area: low;
+    }
+
+    .axis-end.high {
+      grid-area: high;
+      text-align: right;
+    }
+
+    .y-axis {
+      grid-column: 1;
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 0 8px;
+    }
+
+    .y-axis span:last-child {
+      color: rgba(248, 234, 210, .82);
+    }
 
     .map-dot {
       position: absolute;
@@ -581,12 +622,24 @@
       box-shadow: 5px 5px 0 rgba(0,0,0,.26);
       border-radius: 8px;
       padding: 6px 7px;
-      font-size: 11px;
-      line-height: .95;
+      font-size: 10px;
+      line-height: 1;
       font-weight: 1000;
       text-transform: uppercase;
-      min-width: 68px;
+      min-width: 86px;
       text-align: center;
+      white-space: nowrap;
+    }
+
+    .map-dot span {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 9px;
+      letter-spacing: .06em;
+    }
+
+    .map-dot strong {
+      display: block;
     }
 
     .map-note {
@@ -837,6 +890,35 @@
         padding: 14px;
       }
 
+      .map-panel {
+        padding: 18px 14px;
+      }
+
+      .axis-frame {
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 6px 7px;
+      }
+
+      .quadrant {
+        min-height: 0;
+        width: 100%;
+      }
+
+      .axis-end,
+      .y-axis span {
+        font-size: 7.5px;
+      }
+
+      .map-dot {
+        min-width: 72px;
+        padding: 5px 6px;
+        font-size: 8.5px;
+      }
+
+      .map-dot span {
+        font-size: 7.5px;
+      }
+
       .footer {
         flex-direction: column;
       }
@@ -951,16 +1033,22 @@
         <aside class="side" aria-label="Live pulse">
           <section class="map-panel">
             <div class="map-title"><span>Current AI-Agent Lane</span><span>2x2</span></div>
-            <div class="quadrant" aria-label="Current AI agent direction map">
-              <div class="axis-title">Transformative?</div>
-              <div class="axis-label top">Net +<br>for society</div>
-              <div class="axis-label bottom">Net -<br>or risky</div>
-              <div class="axis-label left">Low<br>change</div>
-              <div class="axis-label right">High<br>change</div>
-              <div class="map-dot" style="--x: 78%; --y: 26%; --accent: var(--red)">Dario<br>Full Speed</div>
-              <div class="map-dot" style="--x: 79%; --y: 74%; --accent: var(--gold)">Hinton<br>Hazard</div>
-              <div class="map-dot" style="--x: 24%; --y: 74%; --accent: var(--blue)">Gary<br>Bad Bet</div>
-              <div class="map-dot" style="--x: 24%; --y: 28%; --accent: var(--green)">LeCun<br>Detour</div>
+            <div class="axis-frame">
+              <div class="x-axis" aria-hidden="true">
+                <span class="axis-end">Not much<br>transformative</span>
+                <span class="axis-title">Transformative?</span>
+                <span class="axis-end high">Very<br>transformative</span>
+              </div>
+              <div class="y-axis" aria-hidden="true">
+                <span>Net positive<br>for society</span>
+                <span>Too dangerous<br>or net negative</span>
+              </div>
+              <div class="quadrant" aria-label="Current AI agent direction map">
+                <div class="map-dot" style="--x: 77%; --y: 25%; --accent: var(--red)"><span>Dario</span><strong>Full Speed</strong></div>
+                <div class="map-dot" style="--x: 77%; --y: 75%; --accent: var(--gold)"><span>Hinton</span><strong>Hazard</strong></div>
+                <div class="map-dot" style="--x: 25%; --y: 75%; --accent: var(--blue)"><span>Gary</span><strong>Hype &gt;&gt; ROI</strong></div>
+                <div class="map-dot" style="--x: 25%; --y: 25%; --accent: var(--green)"><span>LeCun</span><strong>Detour</strong></div>
+              </div>
             </div>
             <p class="map-note">The map is about today’s LLM-agent lane, not every possible future AI route.</p>
           </section>
