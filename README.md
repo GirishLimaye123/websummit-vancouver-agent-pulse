@@ -4,8 +4,8 @@ A fast hallway pulse-check app for GovAI.fm conversations at Web Summit Vancouve
 
 Open `index.html` in a browser to run the app. It records local, on-device responses across four AI agent camps. People can pick one or more:
 
-- World Changers
-- Hype > ROI
+- Nobel Agents
+- Hype >> ROI
 - Too Dangerous
 - Wrong Architecture
 
