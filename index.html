@@ -1678,7 +1678,8 @@
     }
 
     async function submitResponse(payload) {
-      const response = await fetch("/api/responses", {
+      const basePath = window.location.pathname.startsWith("/AI-pulse") ? "/AI-pulse" : "";
+      const response = await fetch(`${basePath}/api/responses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
