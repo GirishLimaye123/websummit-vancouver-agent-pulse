@@ -1,0 +1,14 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/AI-pulse",
+      "destination": "/"
+    },
+    {
+      "source": "/AI-pulse/:path*",
+      "destination": "/:path*"
+    }
+  ]
+}

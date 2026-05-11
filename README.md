@@ -15,5 +15,5 @@ The app also includes a subtle optional note field for a quote, caveat, or one-l
 
 `alternatives.html` shows three visual directions side by side: Compass, Road Signs, and Odds Board.
 
-The root app now uses a tappable 2x2 quadrant with market-style actions: All In, Short, Hedge, and Switch.
+The root app now uses a tappable 2x2 quadrant with market-style actions: All In, Short, Hedge, and Trim.
 The default layout is Odds Only, with circular face portraits and a 100-chip bet split prototype below the quadrant.

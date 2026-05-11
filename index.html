@@ -1391,7 +1391,7 @@
                   </span>
                   <span class="camp-meta">
                     <span class="camp-name">LeCun camp</span>
-                    <span class="market-action">Switch</span>
+                    <span class="market-action">Trim</span>
                   </span>
                 </span>
                 <span class="camp-visual" aria-hidden="true">
@@ -1677,13 +1677,31 @@
       els.cards.forEach(card => card.classList.toggle("selected", selectedCamps.has(card.dataset.id)));
     }
 
-    function recordResponse() {
+    async function submitResponse(payload) {
+      const response = await fetch("/api/responses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error("Response API failed");
+      }
+      return response.json();
+    }
+
+    async function recordResponse() {
       const ids = Array.from(selectedCamps);
       const note = els.switcher.value.trim();
       if (!ids.length) {
         flash("Pick at least one camp first.");
         return;
       }
+      const payload = {
+        camps: ids,
+        note,
+        allocation: { ...state.allocation },
+        createdAt: new Date().toISOString()
+      };
       ids.forEach(id => {
         state.votes[id] = (state.votes[id] || 0) + 1;
       });
@@ -1704,6 +1722,12 @@
       renderBars();
       markSelected();
       flash(`Response recorded: ${ids.map(id => camps.find(camp => camp.id === id).label).join(", ")}.`);
+
+      try {
+        await submitResponse(payload);
+      } catch {
+        flash("Response recorded locally; backend not configured yet.");
+      }
     }
 
     function flash(message) {
