@@ -1796,12 +1796,29 @@
       const response = await fetch(responseEndpoint(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        cache: "no-store",
         body: JSON.stringify(payload)
       });
       if (!response.ok) {
         throw new Error("Response API failed");
       }
       return response.json();
+    }
+
+    async function refreshLiveTally() {
+      const endpoint = responseEndpoint();
+      const response = await fetch(`${endpoint}${endpoint.includes("?") ? "&" : "?"}t=${Date.now()}`, {
+        headers: { "Accept": "application/json" },
+        cache: "no-store"
+      });
+      if (!response.ok) {
+        throw new Error("Live tally API failed");
+      }
+      const result = await response.json();
+      if (!applyLiveSummary(result.summary)) {
+        throw new Error("Live tally response missing summary");
+      }
+      renderBars();
     }
 
     async function recordResponse() {
@@ -1834,19 +1851,25 @@
       selectedCamps.clear();
       els.switcher.value = "";
       saveState();
-      syncTallyFromState();
       revealTally = true;
-      renderBars();
       markSelected();
-      flash(`Response recorded: ${ids.map(id => camps.find(camp => camp.id === id).label).join(", ")}.`);
+      els.recordResponse.disabled = true;
+      flash("Recording; syncing live tally...");
 
       try {
         const result = await submitResponse(payload);
         if (applyLiveSummary(result.summary)) {
           renderBars();
+        } else {
+          await refreshLiveTally();
         }
+        flash(`Response recorded: ${ids.map(id => camps.find(camp => camp.id === id).label).join(", ")}.`);
       } catch {
+        syncTallyFromState();
+        renderBars();
         flash("Response recorded locally; live save failed.");
+      } finally {
+        els.recordResponse.disabled = false;
       }
     }
 
