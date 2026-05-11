@@ -1749,9 +1749,14 @@
       els.cards.forEach(card => card.classList.toggle("selected", selectedCamps.has(card.dataset.id)));
     }
 
+    function responseEndpoint() {
+      const isLocal = window.location.protocol === "file:" || ["localhost", "127.0.0.1"].includes(window.location.hostname);
+      if (isLocal) return "https://www.govai.fm/AI-pulse/api/responses";
+      return window.location.pathname.startsWith("/AI-pulse") ? "/AI-pulse/api/responses" : "/api/responses";
+    }
+
     async function submitResponse(payload) {
-      const basePath = window.location.pathname.startsWith("/AI-pulse") ? "/AI-pulse" : "";
-      const response = await fetch(`${basePath}/api/responses`, {
+      const response = await fetch(responseEndpoint(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -1800,7 +1805,7 @@
       try {
         await submitResponse(payload);
       } catch {
-        flash("Response recorded locally; backend not configured yet.");
+        flash("Response recorded locally; live save failed.");
       }
     }
 
