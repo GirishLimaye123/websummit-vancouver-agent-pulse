@@ -394,146 +394,135 @@
       opacity: .9;
     }
 
-    .hazard {
+    .road-sign {
       position: absolute;
-      left: 22px;
-      top: 14px;
-      width: 76px;
-      height: 76px;
-      background: var(--gold);
-      border: 4px solid var(--ink);
-      clip-path: polygon(50% 3%, 98% 94%, 2% 94%);
+      z-index: 3;
       display: grid;
-      place-items: end center;
-      padding-bottom: 13px;
-      font-size: 34px;
-      font-weight: 1000;
+      place-items: center;
+      text-align: center;
       color: var(--ink);
-      z-index: 2;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: .025em;
+      line-height: .92;
+      box-shadow: 6px 6px 0 rgba(0,0,0,.28);
     }
 
-    .deadend {
-      left: 18px;
-      top: 14px;
-      width: 88px;
-      height: 52px;
-      border: 4px solid var(--ink);
-      background: #fffaf1;
-      font-size: 18px;
-    }
-
-    .detour-arrow {
-      position: absolute;
-      right: 14px;
-      bottom: 34px;
-      width: 78px;
-      height: 72px;
-      border: 10px solid var(--green);
-      border-left-color: transparent;
-      border-bottom-color: transparent;
-      border-radius: 0 55px 0 0;
-      transform: rotate(5deg);
-      z-index: 2;
-    }
-
-    .detour-arrow::after {
+    .road-sign::after {
       content: "";
       position: absolute;
-      right: -17px;
-      top: -17px;
-      border-left: 25px solid var(--green);
-      border-top: 16px solid transparent;
-      border-bottom: 16px solid transparent;
-      transform: rotate(45deg);
+      left: 50%;
+      top: 100%;
+      width: 7px;
+      height: 34px;
+      background: #d8d0c1;
+      border: 2px solid var(--ink);
+      transform: translateX(-50%);
+      z-index: -1;
     }
 
-    .toll {
-      position: absolute;
-      left: 18px;
-      bottom: 38px;
-      width: 96px;
-      height: 62px;
-      border: 4px solid var(--ink);
-      background: #f8ead2;
-      z-index: 2;
-      box-shadow: 5px 5px 0 rgba(0,0,0,.3);
+    .road-sign.diamond {
+      left: 50%;
+      top: 50%;
+      width: 100px;
+      height: 100px;
+      background: #f2c22e;
+      border: 5px solid #111216;
+      transform: translate(-50%, -50%) rotate(45deg);
+      box-shadow: 7px 7px 0 rgba(0,0,0,.28);
     }
 
-    .toll::before {
-      content: "$$$";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 7px;
-      color: var(--blue);
-      font-weight: 1000;
-      font-size: 26px;
-      text-align: center;
-    }
-
-    .toll::after {
-      content: "ROI?";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 8px;
-      color: var(--ink);
-      font-weight: 1000;
-      font-size: 18px;
-      text-align: center;
-    }
-
-    .u-turn {
-      position: absolute;
-      right: 18px;
-      top: 18px;
-      width: 58px;
-      height: 58px;
-      border: 7px solid var(--blue);
-      border-right-color: transparent;
-      border-bottom-color: transparent;
-      border-radius: 50%;
+    .road-sign.diamond span {
       transform: rotate(-45deg);
+      display: grid;
+      gap: 6px;
+      justify-items: center;
+      font-size: 18px;
     }
 
-    .u-turn::after {
+    .road-sign.diamond::after {
+      display: none;
+    }
+
+    .road-sign.diamond small {
+      display: block;
+      font-size: 34px;
+      line-height: .6;
+    }
+
+    .open-road-sign {
+      left: 50%;
+      top: 50%;
+      width: 134px;
+      height: 86px;
+      padding-top: 9px;
+      border: 5px solid #fffaf1;
+      outline: 4px solid #0b5f37;
+      background: #0d7040;
+      color: #fffaf1;
+      transform: translate(-50%, -50%);
+      border-radius: 7px;
+      font-size: 18px;
+    }
+
+    .open-road-sign::before {
       content: "";
       position: absolute;
-      left: -15px;
+      left: 32px;
+      right: 32px;
       bottom: 6px;
-      border-right: 21px solid var(--blue);
-      border-top: 13px solid transparent;
-      border-bottom: 13px solid transparent;
-      transform: rotate(28deg);
+      height: 28px;
+      background:
+        linear-gradient(64deg, transparent 0 43%, #fffaf1 44% 49%, transparent 50%) left bottom / 42px 38px no-repeat,
+        linear-gradient(-64deg, transparent 0 43%, #fffaf1 44% 49%, transparent 50%) right bottom / 42px 38px no-repeat,
+        linear-gradient(#fffaf1 0 0) 50% 14px / 5px 22px no-repeat;
+      opacity: .32;
     }
 
-    .go-flag {
-      right: 10px;
-      top: 14px;
-      width: 64px;
-      min-height: 44px;
-      border: 4px solid var(--ink);
-      background: #f8ead2;
-      font-size: 23px;
-      color: var(--red);
+    .boat-sign {
+      left: 50%;
+      top: 50%;
+      width: 108px;
+      height: 108px;
+      background: #f2c22e;
+      border: 5px solid #111216;
+      transform: translate(-50%, -50%) rotate(45deg);
+      box-shadow: 7px 7px 0 rgba(0,0,0,.28);
+      overflow: hidden;
     }
 
-    .go-flag::after {
+    .boat-sign span {
+      position: relative;
+      z-index: 2;
+      transform: rotate(-45deg);
+      display: block;
+      width: 118px;
+      margin-top: -4px;
+      font-size: 13px;
+    }
+
+    .boat-sign::before {
+      content: "";
+      position: absolute;
       left: -10px;
-      top: -4px;
-      height: 78px;
-      transform: none;
+      right: -10px;
+      bottom: 4px;
+      height: 20px;
+      background: repeating-radial-gradient(ellipse at 14px 26px, #1c69b7 0 5px, #f2c22e 6px 10px, #1c69b7 11px 15px);
+      transform: rotate(-45deg) scaleX(1.5);
     }
 
-    .danger-sign {
-      right: 18px;
-      top: 30px;
-      width: 104px;
-      min-height: 54px;
-      border: 4px solid var(--ink);
-      background: #fffaf1;
-      color: var(--gold);
-      font-size: 17px;
+    .boat-sign::after {
+      content: "";
+      position: absolute;
+      left: 30px;
+      bottom: 21px;
+      width: 48px;
+      height: 22px;
+      background: var(--ink);
+      clip-path: polygon(0 35%, 100% 35%, 82% 100%, 18% 100%);
+      transform: rotate(-45deg);
+      border: 0;
     }
 
     .camp--danger .road {
@@ -654,14 +643,28 @@
     .y-axis {
       grid-column: 1;
       grid-row: 2;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      display: grid;
+      grid-template-rows: auto 1fr 1fr;
+      gap: 8px;
       padding: 6px 0 8px;
     }
 
-    .y-axis span:last-child {
+    .y-axis-title {
       color: rgba(248, 234, 210, .82);
+    }
+
+    .y-axis span:nth-child(2) {
+      align-self: start;
+    }
+
+    .y-axis span:last-child {
+      align-self: end;
+      color: rgba(248, 234, 210, .82);
+    }
+
+    .camp-axis-frame .y-axis span,
+    .camp-axis-frame .y-axis span:last-child {
+      color: rgba(23, 23, 23, .5);
     }
 
     .map-dot {
@@ -1017,12 +1020,13 @@
           <div class="axis-frame camp-axis-frame">
             <div class="x-axis" aria-hidden="true">
               <span class="axis-end">Not much<br>transformative</span>
-              <span class="axis-title">Transformative?</span>
+              <span class="axis-title">X-axis: Transformative?</span>
               <span class="axis-end high">Very<br>transformative</span>
             </div>
             <div class="y-axis" aria-hidden="true">
+              <span class="y-axis-title">Y-axis: Society impact?</span>
               <span>Net positive<br>for society</span>
-              <span>Too dangerous<br>or net negative</span>
+              <span>Net negative<br>for society</span>
             </div>
 
             <div class="cards" id="cards" aria-label="AI agent camps">
@@ -1039,8 +1043,7 @@
                   </span>
                 </span>
                 <span class="camp-visual" aria-hidden="true">
-                  <span class="sign deadend">Dead<br>End</span>
-                  <span class="detour-arrow"></span>
+                  <span class="road-sign diamond"><span>Detour<br>Ahead<small>→</small></span></span>
                   <span class="road"></span>
                 </span>
               </button>
@@ -1054,13 +1057,11 @@
                   </span>
                   <span class="camp-meta">
                     <span class="camp-name">Dario camp</span>
-                    <span class="market-action">Buy</span>
+                    <span class="market-action">All In</span>
                   </span>
                 </span>
                 <span class="camp-visual" aria-hidden="true">
-                  <span class="speed-lines"></span>
-                  <span class="vehicle"></span>
-                  <span class="sign go-flag">Go</span>
+                  <span class="road-sign open-road-sign">Open Road<br>Ahead</span>
                   <span class="road"></span>
                 </span>
               </button>
@@ -1078,8 +1079,7 @@
                   </span>
                 </span>
                 <span class="camp-visual" aria-hidden="true">
-                  <span class="u-turn"></span>
-                  <span class="toll"></span>
+                  <span class="road-sign boat-sign"><span>Road Ends:<br>Use Boat</span></span>
                   <span class="road"></span>
                 </span>
               </button>
@@ -1097,8 +1097,7 @@
                   </span>
                 </span>
                 <span class="camp-visual" aria-hidden="true">
-                  <span class="hazard">!</span>
-                  <span class="sign danger-sign">Hazard<br>Ahead</span>
+                  <span class="road-sign diamond"><span>Hazard<br>Ahead<small>!</small></span></span>
                   <span class="road"></span>
                 </span>
               </button>
