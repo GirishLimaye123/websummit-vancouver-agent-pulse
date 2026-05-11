@@ -1597,16 +1597,17 @@
 
     function renderBars() {
       const totalResponses = state.responses || 0;
+      const totalWeight = camps.reduce((sum, camp) => sum + (state.votes[camp.id] || 0), 0);
       els.resultPanel.hidden = !revealTally;
       els.bars.innerHTML = "";
       camps.forEach(camp => {
         const count = state.votes[camp.id] || 0;
-        const pct = totalResponses ? Math.round((count / totalResponses) * 100) : 0;
+        const pct = totalWeight ? Math.round((count / totalWeight) * 100) : 0;
         const row = document.createElement("div");
         row.className = "bar-row";
         row.style.setProperty("--accent", camp.accent);
         row.innerHTML = `
-          <div class="bar-meta"><span>${camp.label}</span><span>${count} · ${pct}%</span></div>
+          <div class="bar-meta"><span>${camp.label}</span><span>${count} chips · ${pct}%</span></div>
           <div class="track"><div class="fill" style="width:${pct}%"></div></div>
         `;
         els.bars.appendChild(row);
@@ -1658,6 +1659,32 @@
       });
     }
 
+    function allocationForSelectedCamps() {
+      const ids = Array.from(selectedCamps);
+      if (!ids.length) return { ...defaultAllocation };
+      const next = Object.fromEntries(camps.map(camp => [camp.id, 0]));
+      const base = Math.floor(100 / ids.length);
+      let remainder = 100 - (base * ids.length);
+      ids.forEach(id => {
+        next[id] = base + (remainder > 0 ? 1 : 0);
+        remainder -= 1;
+      });
+      return next;
+    }
+
+    function syncSelectedFromAllocation() {
+      selectedCamps = new Set(camps
+        .filter(camp => (state.allocation[camp.id] || 0) > 0)
+        .map(camp => camp.id));
+    }
+
+    function selectedAllocation() {
+      return Object.fromEntries(camps.map(camp => [
+        camp.id,
+        selectedCamps.has(camp.id) ? (state.allocation[camp.id] || 0) : 0
+      ]));
+    }
+
     function setAllChips(id) {
       state.allocation = Object.fromEntries(camps.map(camp => [camp.id, camp.id === id ? 100 : 0]));
       selectedCamps = new Set([id]);
@@ -1696,9 +1723,11 @@
       }
 
       state.allocation = sanitizeAllocation(next);
+      syncSelectedFromAllocation();
       saveState();
       renderChipStack();
       syncChipControls();
+      markSelected();
     }
 
     function toggleCamp(id) {
@@ -1707,6 +1736,10 @@
       } else {
         selectedCamps.add(id);
       }
+      state.allocation = allocationForSelectedCamps();
+      saveState();
+      renderChipStack();
+      syncChipControls();
       markSelected();
       const count = selectedCamps.size;
       flash(count ? `${count} camp${count === 1 ? "" : "s"} selected.` : "No camps selected.");
@@ -1736,22 +1769,23 @@
         flash("Pick at least one camp first.");
         return;
       }
+      const allocation = selectedAllocation();
       const payload = {
         camps: ids,
         note,
-        allocation: { ...state.allocation },
+        allocation,
         createdAt: new Date().toISOString()
       };
       ids.forEach(id => {
-        state.votes[id] = (state.votes[id] || 0) + 1;
+        state.votes[id] = (state.votes[id] || 0) + allocation[id];
       });
       state.responses += 1;
-      state.history.push(ids);
+      state.history.push({ camps: ids, allocation });
       if (note) {
         state.notes.push({
           camps: ids,
           note,
-          allocation: { ...state.allocation },
+          allocation,
           createdAt: new Date().toISOString()
         });
       }
@@ -1788,10 +1822,16 @@
         flash("No response to undo.");
         return;
       }
-      const ids = Array.isArray(last) ? last : [last];
-      ids.forEach(id => {
-        state.votes[id] = Math.max(0, (state.votes[id] || 0) - 1);
-      });
+      if (last.allocation) {
+        camps.forEach(camp => {
+          state.votes[camp.id] = Math.max(0, (state.votes[camp.id] || 0) - (last.allocation[camp.id] || 0));
+        });
+      } else {
+        const ids = Array.isArray(last) ? last : [last];
+        ids.forEach(id => {
+          state.votes[id] = Math.max(0, (state.votes[id] || 0) - 1);
+        });
+      }
       state.responses = Math.max(0, (state.responses || 0) - 1);
       selectedCamps.clear();
       saveState();
