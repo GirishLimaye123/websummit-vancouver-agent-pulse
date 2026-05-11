@@ -1865,9 +1865,14 @@
         }
         flash(`Response recorded: ${ids.map(id => camps.find(camp => camp.id === id).label).join(", ")}.`);
       } catch {
-        syncTallyFromState();
-        renderBars();
-        flash("Response recorded locally; live save failed.");
+        try {
+          await refreshLiveTally();
+          flash("Live tally refreshed; save confirmation failed.");
+        } catch {
+          syncTallyFromState();
+          renderBars();
+          flash("Could not sync live tally; showing this device only.");
+        }
       } finally {
         els.recordResponse.disabled = false;
       }
