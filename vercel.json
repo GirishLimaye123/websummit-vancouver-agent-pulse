@@ -19,6 +19,24 @@
           "value": "no-store"
         }
       ]
+    },
+    {
+      "source": "/ai-pulse",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/ai-pulse/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -28,6 +46,14 @@
     },
     {
       "source": "/AI-pulse/:path*",
+      "destination": "/:path*"
+    },
+    {
+      "source": "/ai-pulse",
+      "destination": "/"
+    },
+    {
+      "source": "/ai-pulse/:path*",
       "destination": "/:path*"
     }
   ]

@@ -1790,36 +1790,57 @@
     function responseEndpoint() {
       const isLocal = window.location.protocol === "file:" || ["localhost", "127.0.0.1"].includes(window.location.hostname);
       if (isLocal) return "https://www.govai.fm/AI-pulse/api/responses";
-      return window.location.pathname.startsWith("/AI-pulse") ? "/AI-pulse/api/responses" : "/api/responses";
+      const pulseMatch = window.location.pathname.match(/^\/ai-pulse\b/i);
+      return pulseMatch ? `${pulseMatch[0]}/api/responses` : "/api/responses";
+    }
+
+    function responseEndpoints() {
+      const directEndpoint = "https://for-the-websummit-i-am-going-lake.vercel.app/api/responses";
+      return [...new Set([responseEndpoint(), directEndpoint])];
     }
 
     async function submitResponse(payload) {
-      const response = await fetch(responseEndpoint(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        body: JSON.stringify(payload)
-      });
-      if (!response.ok) {
-        throw new Error("Response API failed");
+      let lastError;
+      for (const endpoint of responseEndpoints()) {
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=UTF-8" },
+            cache: "no-store",
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) {
+            throw new Error(`Response API failed at ${endpoint}`);
+          }
+          return response.json();
+        } catch (error) {
+          lastError = error;
+        }
       }
-      return response.json();
+      throw lastError || new Error("Response API failed");
     }
 
     async function refreshLiveTally() {
-      const endpoint = responseEndpoint();
-      const response = await fetch(`${endpoint}${endpoint.includes("?") ? "&" : "?"}t=${Date.now()}`, {
-        headers: { "Accept": "application/json" },
-        cache: "no-store"
-      });
-      if (!response.ok) {
-        throw new Error("Live tally API failed");
+      let lastError;
+      for (const endpoint of responseEndpoints()) {
+        try {
+          const response = await fetch(`${endpoint}${endpoint.includes("?") ? "&" : "?"}t=${Date.now()}`, {
+            cache: "no-store"
+          });
+          if (!response.ok) {
+            throw new Error(`Live tally API failed at ${endpoint}`);
+          }
+          const result = await response.json();
+          if (!applyLiveSummary(result.summary)) {
+            throw new Error(`Live tally response missing summary at ${endpoint}`);
+          }
+          renderBars();
+          return;
+        } catch (error) {
+          lastError = error;
+        }
       }
-      const result = await response.json();
-      if (!applyLiveSummary(result.summary)) {
-        throw new Error("Live tally response missing summary");
-      }
-      renderBars();
+      throw lastError || new Error("Live tally API failed");
     }
 
     async function recordResponse() {
@@ -1870,9 +1891,8 @@
           await refreshLiveTally();
           flash("Live tally refreshed; save confirmation failed.");
         } catch {
-          syncTallyFromState();
-          renderBars();
-          flash("Could not sync live tally; showing this device only.");
+          els.resultPanel.hidden = true;
+          flash("Could not reach live tally. Try refreshing the page.");
         }
       } finally {
         els.recordResponse.disabled = false;
