@@ -102,9 +102,9 @@
 
     .hero {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(270px, .5fr);
+      grid-template-columns: 1fr;
       gap: 18px;
-      align-items: stretch;
+      align-items: start;
     }
 
     .stage {
@@ -156,43 +156,42 @@
       margin-top: clamp(28px, 4vw, 44px);
     }
 
-    .layout-tabs {
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .layout-tab {
-      min-height: 36px;
-      border: 2px solid var(--ink);
-      background: var(--white);
-      color: var(--ink);
-      border-radius: 7px;
-      padding: 0 11px;
-      font-size: 12px;
-      font-weight: 1000;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 4px 4px 0 rgba(23, 23, 23, .12);
-    }
-
-    .layout-tab.active {
-      background: var(--ink);
-      color: #f8ead2;
-    }
-
     .cards {
       grid-column: 2;
       grid-row: 2;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0;
-      border: 3px solid var(--ink);
+      border: 4px solid var(--ink);
       background: #17191c;
       box-shadow: 10px 10px 0 rgba(23, 23, 23, .14);
       overflow: hidden;
+      position: relative;
+    }
+
+    .cards::before,
+    .cards::after {
+      content: "";
+      position: absolute;
+      z-index: 5;
+      pointer-events: none;
+      background: var(--ink);
+    }
+
+    .cards::before {
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 5px;
+      transform: translateX(-50%);
+    }
+
+    .cards::after {
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 5px;
+      transform: translateY(-50%);
     }
 
     .camp {
@@ -580,62 +579,55 @@
       opacity: .45;
     }
 
-    .cards--sign-first .camp {
-      min-height: 292px;
-      grid-template-columns: 78px minmax(0, 1fr);
-      grid-template-rows: 126px minmax(150px, 1fr);
-      grid-template-areas:
-        "visual visual"
-        "photo copy";
-    }
-
-    .cards--sign-first .camp-visual {
-      border-top: 0;
-      border-bottom: 3px solid var(--ink);
-    }
-
-    .cards--sign-first .camp-photo {
-      border-top: 0;
-    }
-
-    .cards--sign-first .camp-copy {
-      padding: 14px;
-    }
-
-    .cards--sign-first .camp-title {
-      font-size: clamp(18px, 1.55vw, 23px);
-    }
-
-    .cards--sign-first .camp-meta {
-      justify-content: flex-start;
-    }
-
-    .cards--sign-first .market-action {
-      display: none;
-    }
-
     .cards--compact .camp {
-      min-height: 204px;
-      grid-template-columns: minmax(84px, 108px) minmax(0, 1fr);
+      min-height: 238px;
+      grid-template-columns: 1fr;
       grid-template-rows: 1fr;
-      grid-template-areas: "photo copy";
+      grid-template-areas: "copy";
+    }
+
+    .cards--compact .camp-photo {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 3;
+      width: 84px;
+      height: 84px;
+      min-height: 0;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      box-shadow: 5px 5px 0 rgba(23, 23, 23, .18);
+    }
+
+    .cards--compact .camp-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cards--compact .camp[data-id="maximalist"] img,
+    .cards--compact .camp[data-id="danger"] img,
+    .cards--compact .camp[data-id="architecture"] img {
+      transform: scale(1.22);
+      transform-origin: 50% 22%;
     }
 
     .cards--compact .camp-copy {
-      padding: 16px;
+      min-height: 100%;
+      padding: 18px 116px 18px 18px;
     }
 
     .cards--compact .camp-title {
-      font-size: clamp(17px, 1.45vw, 21px);
+      font-size: clamp(20px, 1.65vw, 25px);
     }
 
     .cards--compact .camp[data-id="architecture"] .camp-title,
     .cards--compact .camp[data-id="danger"] .camp-title {
-      font-size: clamp(14px, 1.12vw, 17px);
+      font-size: clamp(17px, 1.35vw, 22px);
     }
 
     .cards--compact .camp-line {
-      font-size: clamp(13px, 1.28vw, 17px);
+      font-size: clamp(15px, 1.45vw, 19px);
     }
 
     .cards--compact .camp-name {
@@ -647,9 +639,9 @@
     }
 
     .cards--compact .market-action {
-      min-width: 78px;
-      padding: 9px 10px;
-      font-size: 14px;
+      min-width: 86px;
+      padding: 10px 12px;
+      font-size: 15px;
     }
 
     .cards--compact .camp-visual {
@@ -759,12 +751,25 @@
         "title title"
         "low high";
       gap: 4px 8px;
+      position: relative;
+      padding-bottom: 9px;
+      border-bottom: 4px solid var(--ink);
+    }
+
+    .x-axis::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      bottom: -10px;
+      border-left: 12px solid var(--ink);
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
     }
 
     .axis-title {
       grid-area: title;
       color: rgba(248, 234, 210, .8);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 1000;
       letter-spacing: .08em;
       text-transform: uppercase;
@@ -775,7 +780,7 @@
     .axis-end,
     .y-axis span {
       color: rgba(248, 234, 210, .72);
-      font-size: 8.5px;
+      font-size: 9.5px;
       font-weight: 950;
       letter-spacing: .06em;
       text-transform: uppercase;
@@ -792,29 +797,49 @@
     }
 
     .camp-axis-frame .axis-title {
-      color: rgba(23, 23, 23, .62);
+      color: rgba(23, 23, 23, .78);
     }
 
     .camp-axis-frame .axis-end,
     .camp-axis-frame .y-axis span {
-      color: rgba(23, 23, 23, .5);
+      color: rgba(23, 23, 23, .68);
     }
 
     .y-axis {
       grid-column: 1;
       grid-row: 2;
-      display: grid;
-      grid-template-rows: 1fr auto 1fr;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
       gap: 8px;
-      padding: 6px 0 8px;
+      padding: 8px 12px 8px 0;
+      position: relative;
+      border-right: 4px solid var(--ink);
+    }
+
+    .y-axis::before {
+      content: "";
+      position: absolute;
+      right: -10px;
+      top: -2px;
+      border-bottom: 12px solid var(--ink);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
     }
 
     .y-axis-title {
       align-self: center;
       justify-self: center;
       color: rgba(248, 234, 210, .82);
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
+      position: absolute;
+      top: 50%;
+      left: 42%;
+      transform: translate(-50%, -50%) rotate(-90deg);
+      writing-mode: horizontal-tb;
+      white-space: nowrap;
+      background: var(--panel);
+      padding: 4px 8px;
       text-align: center;
     }
 
@@ -829,7 +854,7 @@
 
     .camp-axis-frame .y-axis span,
     .camp-axis-frame .y-axis span:last-child {
-      color: rgba(23, 23, 23, .5);
+      color: rgba(23, 23, 23, .68);
     }
 
     .map-dot {
@@ -871,19 +896,27 @@
       font-weight: 700;
     }
 
-    .side {
-      display: grid;
-      gap: 18px;
-      grid-template-rows: auto 1fr;
+    [hidden] {
+      display: none !important;
     }
 
-    .result-panel, .switch-panel {
+    .response-dock {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, .58fr);
+      gap: 18px;
+    }
+
+    .result-panel, .switch-panel, .bet-panel {
       border-radius: 8px;
       border: 1px solid rgba(248, 234, 210, .25);
       background: rgba(248, 241, 230, .09);
       color: #f8ead2;
       padding: 22px;
       backdrop-filter: blur(16px);
+    }
+
+    .result-panel {
+      grid-column: 1 / -1;
     }
 
     .result-title {
@@ -944,6 +977,94 @@
       letter-spacing: .1em;
       text-transform: uppercase;
       color: rgba(248, 234, 210, .72);
+    }
+
+    .bet-panel {
+      display: grid;
+      gap: 16px;
+    }
+
+    .bet-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .bet-head span {
+      font-size: 18px;
+    }
+
+    .bet-head small {
+      color: rgba(248, 234, 210, .68);
+      font-size: 11px;
+      line-height: 1.2;
+      text-align: right;
+    }
+
+    .chip-stack {
+      display: grid;
+      grid-template-columns: repeat(25, minmax(0, 1fr));
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid rgba(248, 234, 210, .26);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, .18);
+    }
+
+    .chip {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--chip);
+      border: 1px solid rgba(17, 18, 22, .65);
+      box-shadow: inset 0 0 0 2px rgba(248, 234, 210, .18);
+    }
+
+    .chip-controls {
+      display: grid;
+      gap: 10px;
+    }
+
+    .chip-row {
+      display: grid;
+      grid-template-columns: minmax(118px, .82fr) minmax(120px, 1fr) 68px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .chip-all {
+      min-height: 34px;
+      border: 1px solid rgba(248, 234, 210, .34);
+      border-radius: 7px;
+      background: rgba(248, 234, 210, .08);
+      color: #f8ead2;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      cursor: pointer;
+      text-align: left;
+      padding: 0 10px;
+    }
+
+    .chip-slider {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .chip-count {
+      justify-self: end;
+      min-width: 56px;
+      padding: 5px 7px;
+      border: 1px solid rgba(248, 234, 210, .24);
+      border-radius: 7px;
+      color: #111216;
+      background: var(--accent);
+      font-size: 12px;
+      font-weight: 1000;
+      text-align: center;
     }
 
     .switch-panel {
@@ -1066,7 +1187,7 @@
         min-height: auto;
       }
 
-      .side {
+      .response-dock {
         grid-template-columns: 1fr;
       }
     }
@@ -1092,6 +1213,11 @@
 
       .cards {
         grid-template-columns: 1fr;
+      }
+
+      .cards::before,
+      .cards::after {
+        display: none;
       }
 
       .camp {
@@ -1156,19 +1282,51 @@
         font-size: 7.5px;
       }
 
-      .cards--sign-first .camp {
-        grid-template-columns: 92px minmax(0, 1fr);
-        grid-template-rows: 126px minmax(144px, 1fr);
+      .cards--compact .camp {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        min-height: 186px;
       }
 
-      .cards--compact .camp {
-        grid-template-columns: 82px minmax(0, 1fr);
-        grid-template-rows: 1fr;
-        min-height: 164px;
+      .cards--compact .camp-photo {
+        top: 12px;
+        right: 12px;
+        width: 72px;
+        height: 72px;
+      }
+
+      .cards--compact .camp-copy {
+        padding: 14px 96px 14px 14px;
+      }
+
+      .cards--compact .camp-title {
+        font-size: 18px;
+      }
+
+      .cards--compact .camp-line {
+        font-size: 14px;
+      }
+
+      .cards--compact .market-action {
+        min-width: 72px;
+        padding: 8px 9px;
+        font-size: 12px;
       }
 
       .cards--compact .camp-visual {
         display: none;
+      }
+
+      .chip-stack {
+        grid-template-columns: repeat(20, minmax(0, 1fr));
+      }
+
+      .chip-row {
+        grid-template-columns: 1fr;
+      }
+
+      .chip-count {
+        justify-self: stretch;
       }
 
       .map-dot {
@@ -1209,12 +1367,7 @@
         <section class="stage" aria-labelledby="question">
           <div class="eyebrow"><span>GovAI.fm field question</span><span>LLM-agent camp check</span></div>
           <h1 id="question">How LLM-pilled are you?</h1>
-          <p class="prompt">Pick one or more LLM-agent camps, then add the why if they have a take.</p>
-          <div class="layout-tabs" aria-label="Card layout alternatives">
-            <button class="layout-tab" type="button" data-layout="split">Full Mix</button>
-            <button class="layout-tab active" type="button" data-layout="sign-first">Signs Only</button>
-            <button class="layout-tab" type="button" data-layout="compact">Odds Only</button>
-          </div>
+          <p class="prompt">Pick one or more LLM-agent camps.</p>
 
           <div class="axis-frame camp-axis-frame">
             <div class="x-axis" aria-hidden="true">
@@ -1228,7 +1381,7 @@
               <span class="axis-end">Net negative<br>for society</span>
             </div>
 
-            <div class="cards cards--sign-first" id="cards" aria-label="AI agent camps">
+            <div class="cards cards--compact" id="cards" aria-label="AI agent camps">
               <button class="camp camp--architecture" data-id="architecture" style="--accent: var(--green)">
                 <span class="camp-photo"><img src="assets/yann.jpg" alt="Yann LeCun"></span>
                 <span class="camp-copy">
@@ -1304,23 +1457,27 @@
           </div>
         </section>
 
-        <aside class="side" aria-label="Live pulse">
-          <section class="result-panel">
-            <div class="result-title">Live Tally</div>
-            <div class="bars" id="bars"></div>
-            <div class="total" id="total">0<span>votes captured</span></div>
+        <section class="response-dock" aria-label="Response controls">
+          <section class="bet-panel" aria-label="100-chip bet split">
+            <div class="bet-head"><span>100-chip bet split</span><small>Tap all-in or rebalance.</small></div>
+            <div class="chip-stack" id="chipStack" aria-hidden="true"></div>
+            <div class="chip-controls" id="chipControls"></div>
           </section>
-
           <section class="switch-panel">
-            <label for="switcher">Why? Explain the read.</label>
-            <textarea id="switcher" placeholder="Optional: quote, caveat, or one-line reason."></textarea>
+            <label for="switcher">Optional read</label>
+            <textarea id="switcher" placeholder="Quote, caveat, or one-line reason."></textarea>
             <div class="action-row">
               <button class="primary" id="recordResponse">Record</button>
               <button class="secondary" id="clearNote">Clear</button>
             </div>
             <div class="flash" id="flash"></div>
           </section>
-        </aside>
+          <section class="result-panel" id="resultPanel" hidden>
+            <div class="result-title">Live Tally</div>
+            <div class="bars" id="bars"></div>
+            <div class="total" id="total">0<span>votes captured</span></div>
+          </section>
+        </section>
       </main>
 
       <footer class="footer">
@@ -1349,19 +1506,28 @@
       { id: "architecture", label: "Wrong Architecture", accent: "#477d58" }
     ];
 
+    const defaultAllocation = {
+      maximalist: 25,
+      roi: 25,
+      danger: 25,
+      architecture: 25
+    };
+
     const storeKey = "govai-agent-pulse-v1";
     const defaultState = {
       votes: Object.fromEntries(camps.map(camp => [camp.id, 0])),
       responses: 0,
       history: [],
-      notes: []
+      notes: [],
+      allocation: { ...defaultAllocation }
     };
 
     const els = {
       cards: document.querySelectorAll(".camp"),
       bars: document.getElementById("bars"),
-      cardsGrid: document.getElementById("cards"),
-      layoutTabs: document.querySelectorAll(".layout-tab"),
+      resultPanel: document.getElementById("resultPanel"),
+      chipStack: document.getElementById("chipStack"),
+      chipControls: document.getElementById("chipControls"),
       total: document.getElementById("total"),
       undo: document.getElementById("undo"),
       reset: document.getElementById("reset"),
@@ -1376,6 +1542,7 @@
     };
 
     let selectedCamps = new Set();
+    let revealTally = false;
     let state = loadState();
 
     function loadState() {
@@ -1385,11 +1552,32 @@
         return {
           ...defaultState,
           ...parsed,
+          allocation: sanitizeAllocation(parsed.allocation),
           responses: parsed.responses ?? parsed.history?.length ?? 0
         };
       } catch {
         return structuredClone(defaultState);
       }
+    }
+
+    function sanitizeAllocation(allocation = defaultAllocation) {
+      const source = allocation || defaultAllocation;
+      const next = {};
+      let total = 0;
+      camps.forEach(camp => {
+        const value = Number.isFinite(Number(source[camp.id])) ? Math.max(0, Math.round(Number(source[camp.id]))) : 0;
+        next[camp.id] = value;
+        total += value;
+      });
+      if (total === 100) return next;
+      if (total === 0) return { ...defaultAllocation };
+      const scale = 100 / total;
+      let running = 0;
+      camps.forEach((camp, index) => {
+        next[camp.id] = index === camps.length - 1 ? Math.max(0, 100 - running) : Math.round(next[camp.id] * scale);
+        running += next[camp.id];
+      });
+      return next;
     }
 
     function saveState() {
@@ -1398,6 +1586,7 @@
 
     function renderBars() {
       const totalResponses = state.responses || 0;
+      els.resultPanel.hidden = !revealTally;
       els.bars.innerHTML = "";
       camps.forEach(camp => {
         const count = state.votes[camp.id] || 0;
@@ -1412,6 +1601,65 @@
         els.bars.appendChild(row);
       });
       els.total.innerHTML = `${totalResponses}<span>responses captured</span>`;
+    }
+
+    function renderBetSplit() {
+      const chips = [];
+      camps.forEach(camp => {
+        for (let i = 0; i < state.allocation[camp.id]; i += 1) {
+          chips.push(`<span class="chip" style="--chip:${camp.accent}"></span>`);
+        }
+      });
+      els.chipStack.innerHTML = chips.join("");
+      els.chipControls.innerHTML = camps.map(camp => `
+        <div class="chip-row" style="--accent:${camp.accent}">
+          <button class="chip-all" type="button" data-chip-all="${camp.id}">${camp.label}</button>
+          <input class="chip-slider" type="range" min="0" max="100" value="${state.allocation[camp.id]}" data-chip-slider="${camp.id}" aria-label="${camp.label} chip allocation">
+          <span class="chip-count">${state.allocation[camp.id]}</span>
+        </div>
+      `).join("");
+      els.chipControls.querySelectorAll("[data-chip-all]").forEach(button => {
+        button.addEventListener("click", () => setAllChips(button.dataset.chipAll));
+      });
+      els.chipControls.querySelectorAll("[data-chip-slider]").forEach(slider => {
+        slider.addEventListener("input", () => setCampChips(slider.dataset.chipSlider, Number(slider.value)));
+      });
+    }
+
+    function setAllChips(id) {
+      state.allocation = Object.fromEntries(camps.map(camp => [camp.id, camp.id === id ? 100 : 0]));
+      selectedCamps = new Set([id]);
+      saveState();
+      renderBetSplit();
+      markSelected();
+      const camp = camps.find(item => item.id === id);
+      flash(`${camp.label}: 100 chips.`);
+    }
+
+    function setCampChips(id, value) {
+      const target = Math.max(0, Math.min(100, Math.round(value)));
+      const others = camps.filter(camp => camp.id !== id);
+      const otherTotal = others.reduce((sum, camp) => sum + (state.allocation[camp.id] || 0), 0);
+      const remaining = 100 - target;
+      const next = { [id]: target };
+      let running = target;
+
+      others.forEach((camp, index) => {
+        let share;
+        if (index === others.length - 1) {
+          share = Math.max(0, 100 - running);
+        } else if (otherTotal === 0) {
+          share = Math.floor(remaining / others.length);
+        } else {
+          share = Math.round(((state.allocation[camp.id] || 0) / otherTotal) * remaining);
+        }
+        next[camp.id] = share;
+        running += share;
+      });
+
+      state.allocation = sanitizeAllocation(next);
+      saveState();
+      renderBetSplit();
     }
 
     function toggleCamp(id) {
@@ -1445,12 +1693,14 @@
         state.notes.push({
           camps: ids,
           note,
+          allocation: { ...state.allocation },
           createdAt: new Date().toISOString()
         });
       }
       selectedCamps.clear();
       els.switcher.value = "";
       saveState();
+      revealTally = true;
       renderBars();
       markSelected();
       flash(`Response recorded: ${ids.map(id => camps.find(camp => camp.id === id).label).join(", ")}.`);
@@ -1464,18 +1714,8 @@
       }, 2200);
     }
 
-    function setLayout(layout) {
-      els.cardsGrid.classList.remove("cards--split", "cards--sign-first", "cards--compact");
-      els.cardsGrid.classList.add(`cards--${layout}`);
-      els.layoutTabs.forEach(tab => tab.classList.toggle("active", tab.dataset.layout === layout));
-    }
-
     els.cards.forEach(card => {
       card.addEventListener("click", () => toggleCamp(card.dataset.id));
-    });
-
-    els.layoutTabs.forEach(tab => {
-      tab.addEventListener("click", () => setLayout(tab.dataset.layout));
     });
 
     els.undo.addEventListener("click", () => {
@@ -1506,10 +1746,12 @@
 
     els.confirmResetBtn.addEventListener("click", () => {
       state = structuredClone(defaultState);
+      revealTally = false;
       selectedCamps.clear();
       els.switcher.value = "";
       saveState();
       renderBars();
+      renderBetSplit();
       markSelected();
       els.confirmReset.classList.remove("open");
       flash("Pulse reset.");
@@ -1544,6 +1786,7 @@
     });
 
     renderBars();
+    renderBetSplit();
   </script>
 </body>
 </html>
