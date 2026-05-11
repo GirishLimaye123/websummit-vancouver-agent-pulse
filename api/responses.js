@@ -1,4 +1,5 @@
 const { randomUUID } = require("node:crypto");
+const { put } = require("@vercel/blob");
 
 const allowedCamps = new Set(["maximalist", "roi", "danger", "architecture"]);
 
@@ -26,11 +27,26 @@ function validateAllocation(allocation) {
   return total === 100 ? cleaned : null;
 }
 
+async function saveToBlob(record) {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return null;
+  }
+
+  const day = record.receivedAt.slice(0, 10);
+  const pathname = `responses/${day}/${record.id}.json`;
+  const blob = await put(pathname, JSON.stringify(record, null, 2), {
+    access: "private",
+    addRandomSuffix: false,
+    contentType: "application/json"
+  });
+
+  return { stored: true, target: "vercel-blob", pathname, url: blob.url };
+}
+
 async function forwardToWebhook(record) {
   const webhookUrl = process.env.GOOGLE_APPS_SCRIPT_URL || process.env.RESPONSE_WEBHOOK_URL;
   if (!webhookUrl) {
-    console.log("Response received without storage webhook configured", record);
-    return { stored: false, target: "log" };
+    return null;
   }
 
   const response = await fetch(webhookUrl, {
@@ -45,6 +61,21 @@ async function forwardToWebhook(record) {
   }
 
   return { stored: true, target: "webhook" };
+}
+
+async function storeRecord(record) {
+  const blobStorage = await saveToBlob(record);
+  const webhookStorage = await forwardToWebhook(record);
+
+  if (blobStorage && webhookStorage) {
+    return { stored: true, targets: [blobStorage.target, webhookStorage.target], blob: blobStorage };
+  }
+
+  if (blobStorage) return blobStorage;
+  if (webhookStorage) return webhookStorage;
+
+  console.log("Response received without storage configured", record);
+  return { stored: false, target: "log" };
 }
 
 module.exports = async function handler(req, res) {
@@ -86,7 +117,7 @@ module.exports = async function handler(req, res) {
       source: "govai-field-question"
     };
 
-    const storage = await forwardToWebhook(record);
+    const storage = await storeRecord(record);
     res.status(200).json({ ok: true, ...storage });
   } catch (error) {
     console.error(error);

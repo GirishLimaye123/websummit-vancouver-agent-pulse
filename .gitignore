@@ -1,4 +1,8 @@
 .DS_Store
 .venv/
 __pycache__/
+node_modules/
 
+.vercel
+.env*.local
+.env*.local

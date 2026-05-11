@@ -1,0 +1,8 @@
+{
+  "name": "govai-field-question",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@vercel/blob": "^2.3.3"
+  }
+}
