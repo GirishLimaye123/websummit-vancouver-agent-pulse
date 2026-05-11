@@ -914,7 +914,7 @@
       gap: 18px;
     }
 
-    .result-panel, .switch-panel, .bet-panel {
+    .result-panel, .switch-panel, .bet-panel, .receipts-panel {
       border-radius: 8px;
       border: 1px solid rgba(248, 234, 210, .25);
       background: rgba(248, 241, 230, .09);
@@ -925,6 +925,12 @@
 
     .result-panel {
       grid-column: 1 / -1;
+    }
+
+    .receipts-panel {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 16px;
     }
 
     .result-title {
@@ -985,6 +991,116 @@
       letter-spacing: .1em;
       text-transform: uppercase;
       color: rgba(248, 234, 210, .72);
+    }
+
+    .receipts-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid rgba(248, 234, 210, .22);
+      padding-bottom: 14px;
+    }
+
+    .receipts-title {
+      font-size: 18px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .receipts-note {
+      max-width: 360px;
+      text-align: right;
+      font-size: 13px;
+      line-height: 1.22;
+      font-weight: 760;
+      color: rgba(248, 234, 210, .68);
+    }
+
+    .receipt-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .receipt-card, .fight-link {
+      color: inherit;
+      text-decoration: none;
+      border: 1px solid rgba(248, 234, 210, .28);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, .18);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .receipt-card:hover, .fight-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(248, 234, 210, .65);
+      background: rgba(0, 0, 0, .28);
+    }
+
+    .receipt-card {
+      min-height: 152px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .receipt-card small, .fight-link small {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .receipt-card strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 1000;
+      text-transform: uppercase;
+    }
+
+    .receipt-card span {
+      display: block;
+      color: rgba(248, 234, 210, .72);
+      font-size: 13px;
+      line-height: 1.22;
+      font-weight: 720;
+    }
+
+    .fight-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .fight-link {
+      min-height: 116px;
+      padding: 13px;
+      display: grid;
+      align-content: start;
+      gap: 7px;
+    }
+
+    .fight-link strong {
+      font-size: 14px;
+      line-height: 1.05;
+      font-weight: 1000;
+      text-transform: uppercase;
+    }
+
+    .fight-link span {
+      color: rgba(248, 234, 210, .7);
+      font-size: 12px;
+      line-height: 1.24;
+      font-weight: 700;
     }
 
     .bet-panel {
@@ -1209,6 +1325,11 @@
       .response-dock {
         grid-template-columns: 1fr;
       }
+
+      .receipt-grid,
+      .fight-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 620px) {
@@ -1329,6 +1450,21 @@
 
       .cards--compact .camp-visual {
         display: none;
+      }
+
+      .receipts-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .receipts-note {
+        max-width: none;
+        text-align: left;
+      }
+
+      .receipt-grid,
+      .fight-grid {
+        grid-template-columns: 1fr;
       }
 
       .chip-stack {
@@ -1492,6 +1628,52 @@
             <div class="bars" id="bars"></div>
             <div class="total" id="total">0<span>votes captured</span></div>
           </section>
+          <section class="receipts-panel" id="receiptsPanel" hidden>
+            <div class="receipts-head">
+              <div class="receipts-title">Receipts</div>
+              <div class="receipts-note">Useful links for the follow-up conversation after somebody picks a camp.</div>
+            </div>
+            <div class="receipt-grid" aria-label="Key videos">
+              <a class="receipt-card" href="https://www.youtube.com/watch?v=n1E9IZfvGMA" target="_blank" rel="noopener" style="--accent:#df4d45">
+                <span><small>Dario video</small><strong>Near the End of the Exponential</strong></span>
+                <span>Country-of-geniuses, agent capability, diffusion, and the economy.</span>
+              </a>
+              <a class="receipt-card" href="https://www.youtube.com/watch?v=aI7XknJJC5Q" target="_blank" rel="noopener" style="--accent:#267298">
+                <span><small>Gary video</small><strong>Massive Problems With Scaling</strong></span>
+                <span>Reliability, ROI, and why demo excitement may not survive deployment.</span>
+              </a>
+              <a class="receipt-card" href="https://www.nobelprize.org/prizes/physics/2024/hinton/interview/" target="_blank" rel="noopener" style="--accent:#bd7c23">
+                <span><small>Hinton video</small><strong>Nobel Interview on AI Risk</strong></span>
+                <span>Capability without control, and why the pace changes the risk calculus.</span>
+              </a>
+              <a class="receipt-card" href="https://www.youtube.com/watch?v=4__gg83s_Do" target="_blank" rel="noopener" style="--accent:#477d58">
+                <span><small>LeCun video</small><strong>Scaling LLMs Will Not Reach AGI</strong></span>
+                <span>Why larger LLM agents are not enough, and why architecture matters.</span>
+              </a>
+            </div>
+            <div class="fight-grid" aria-label="Key X threads">
+              <a class="fight-link" href="https://x.com/geoffreyhinton/status/1728178632508780919" target="_blank" rel="noopener" style="--accent:#bd7c23">
+                <small>X fight</small>
+                <strong>Hinton vs LeCun</strong>
+                <span>Hinton pushes back on LeCun's low-risk view.</span>
+              </a>
+              <a class="fight-link" href="https://x.com/ylecun/status/1799064075487572133" target="_blank" rel="noopener" style="--accent:#477d58">
+                <small>X thread</small>
+                <strong>LeCun on Sigmoids</strong>
+                <span>The anti-straight-line-scaling argument.</span>
+              </a>
+              <a class="fight-link" href="https://x.com/ylecun/status/1728867136049709208" target="_blank" rel="noopener" style="--accent:#477d58">
+                <small>X thread</small>
+                <strong>LeCun on LLM Limits</strong>
+                <span>Why current LLMs cannot spend extra compute to think harder.</span>
+              </a>
+              <a class="fight-link" href="https://x.com/GaryMarcus/status/1945560100883615867" target="_blank" rel="noopener" style="--accent:#267298">
+                <small>X fight</small>
+                <strong>Gary vs LeCun</strong>
+                <span>Marcus takes the gloves off on AGI and architecture claims.</span>
+              </a>
+            </div>
+          </section>
         </section>
       </main>
 
@@ -1537,6 +1719,7 @@
       cards: document.querySelectorAll(".camp"),
       bars: document.getElementById("bars"),
       resultPanel: document.getElementById("resultPanel"),
+      receiptsPanel: document.getElementById("receiptsPanel"),
       chipStack: document.getElementById("chipStack"),
       chipControls: document.getElementById("chipControls"),
       total: document.getElementById("total"),
@@ -1636,6 +1819,7 @@
       const totalResponses = visibleTally.responses || 0;
       const totalWeight = camps.reduce((sum, camp) => sum + (visibleTally.votes[camp.id] || 0), 0);
       els.resultPanel.hidden = !revealTally;
+      els.receiptsPanel.hidden = !revealTally;
       els.bars.innerHTML = "";
       camps.forEach(camp => {
         const count = visibleTally.votes[camp.id] || 0;
@@ -1892,6 +2076,7 @@
           flash("Live tally refreshed; save confirmation failed.");
         } catch {
           els.resultPanel.hidden = true;
+          els.receiptsPanel.hidden = true;
           flash("Could not reach live tally. Try refreshing the page.");
         }
       } finally {
