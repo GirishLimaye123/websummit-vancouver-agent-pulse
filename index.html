@@ -1555,6 +1555,7 @@
     let selectedCamps = new Set();
     let revealTally = false;
     let state = loadState();
+    let tally = tallyFromState();
 
     function loadState() {
       try {
@@ -1595,13 +1596,49 @@
       localStorage.setItem(storeKey, JSON.stringify(state));
     }
 
+    function safeCount(value) {
+      const count = Math.round(Number(value || 0));
+      return Number.isFinite(count) && count > 0 ? count : 0;
+    }
+
+    function normalizedVotes(votes = {}) {
+      return Object.fromEntries(camps.map(camp => [
+        camp.id,
+        safeCount(votes[camp.id])
+      ]));
+    }
+
+    function tallyFromState() {
+      return {
+        responses: safeCount(state.responses),
+        votes: normalizedVotes(state.votes),
+        source: "local"
+      };
+    }
+
+    function syncTallyFromState() {
+      tally = tallyFromState();
+    }
+
+    function applyLiveSummary(summary) {
+      if (!summary || typeof summary !== "object") return false;
+      tally = {
+        responses: safeCount(summary.responses),
+        votes: normalizedVotes(summary.votes),
+        source: summary.source || "live",
+        updatedAt: summary.updatedAt || ""
+      };
+      return true;
+    }
+
     function renderBars() {
-      const totalResponses = state.responses || 0;
-      const totalWeight = camps.reduce((sum, camp) => sum + (state.votes[camp.id] || 0), 0);
+      const visibleTally = tally || tallyFromState();
+      const totalResponses = visibleTally.responses || 0;
+      const totalWeight = camps.reduce((sum, camp) => sum + (visibleTally.votes[camp.id] || 0), 0);
       els.resultPanel.hidden = !revealTally;
       els.bars.innerHTML = "";
       camps.forEach(camp => {
-        const count = state.votes[camp.id] || 0;
+        const count = visibleTally.votes[camp.id] || 0;
         const pct = totalWeight ? Math.round((count / totalWeight) * 100) : 0;
         const row = document.createElement("div");
         row.className = "bar-row";
@@ -1797,13 +1834,17 @@
       selectedCamps.clear();
       els.switcher.value = "";
       saveState();
+      syncTallyFromState();
       revealTally = true;
       renderBars();
       markSelected();
       flash(`Response recorded: ${ids.map(id => camps.find(camp => camp.id === id).label).join(", ")}.`);
 
       try {
-        await submitResponse(payload);
+        const result = await submitResponse(payload);
+        if (applyLiveSummary(result.summary)) {
+          renderBars();
+        }
       } catch {
         flash("Response recorded locally; live save failed.");
       }
@@ -1840,6 +1881,7 @@
       state.responses = Math.max(0, (state.responses || 0) - 1);
       selectedCamps.clear();
       saveState();
+      syncTallyFromState();
       renderBars();
       markSelected();
       flash("Last response removed.");
@@ -1859,6 +1901,7 @@
       selectedCamps.clear();
       els.switcher.value = "";
       saveState();
+      syncTallyFromState();
       renderBars();
       renderBetSplit();
       markSelected();

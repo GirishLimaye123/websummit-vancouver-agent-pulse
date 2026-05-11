@@ -1,11 +1,12 @@
 const { randomUUID } = require("node:crypto");
-const { put } = require("@vercel/blob");
+const { get, list, put } = require("@vercel/blob");
 
-const allowedCamps = new Set(["maximalist", "roi", "danger", "architecture"]);
+const campIds = ["maximalist", "roi", "danger", "architecture"];
+const allowedCamps = new Set(campIds);
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", process.env.ALLOWED_ORIGIN || "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
@@ -78,11 +79,91 @@ async function storeRecord(record) {
   return { stored: false, target: "log" };
 }
 
+function emptyVotes() {
+  return Object.fromEntries(campIds.map(id => [id, 0]));
+}
+
+async function recordFromBlob(pathname) {
+  const result = await get(pathname, { access: "private", useCache: false });
+  if (!result || result.statusCode !== 200 || !result.stream) return null;
+
+  const text = await new Response(result.stream).text();
+  return JSON.parse(text);
+}
+
+async function aggregateResponses() {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return {
+      responses: 0,
+      votes: emptyVotes(),
+      source: "log",
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  const votes = emptyVotes();
+  let responses = 0;
+  let scanned = 0;
+  let skipped = 0;
+  let cursor;
+
+  do {
+    const page = await list({ prefix: "responses/", limit: 1000, cursor });
+    scanned += page.blobs.length;
+
+    for (let i = 0; i < page.blobs.length; i += 25) {
+      const chunk = page.blobs.slice(i, i + 25);
+      await Promise.all(chunk.map(async blob => {
+        try {
+          const record = await recordFromBlob(blob.pathname);
+          if (!record || !record.allocation || typeof record.allocation !== "object") {
+            skipped += 1;
+            return;
+          }
+
+          campIds.forEach(id => {
+            const value = Math.round(Number(record.allocation[id] || 0));
+            if (Number.isFinite(value) && value > 0) {
+              votes[id] += value;
+            }
+          });
+          responses += 1;
+        } catch (error) {
+          skipped += 1;
+          console.error(`Could not aggregate ${blob.pathname}`, error);
+        }
+      }));
+    }
+
+    cursor = page.hasMore ? page.cursor : undefined;
+  } while (cursor);
+
+  return {
+    responses,
+    votes,
+    source: "vercel-blob",
+    updatedAt: new Date().toISOString(),
+    scanned,
+    skipped
+  };
+}
+
 module.exports = async function handler(req, res) {
   setCors(res);
 
   if (req.method === "OPTIONS") {
     res.status(204).end();
+    return;
+  }
+
+  if (req.method === "GET") {
+    try {
+      const summary = await aggregateResponses();
+      res.status(200).json({ ok: true, summary });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ ok: false, error: "Could not load tally." });
+    }
     return;
   }
 
@@ -118,7 +199,8 @@ module.exports = async function handler(req, res) {
     };
 
     const storage = await storeRecord(record);
-    res.status(200).json({ ok: true, ...storage });
+    const summary = await aggregateResponses();
+    res.status(200).json({ ok: true, ...storage, summary });
   } catch (error) {
     console.error(error);
     res.status(500).json({ ok: false, error: "Could not save response." });
