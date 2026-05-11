@@ -1,6 +1,6 @@
-# WebSummit Vancouver 2026 Agent Pulse
+# GovAI.fm Field Question
 
-A fast hallway pulse-check app for GovAI.fm conversations at Web Summit Vancouver 2026.
+A fast field-question app for GovAI.fm conversations about LLM-agent bets.
 
 Open `index.html` in a browser to run the app. It records local, on-device responses across four AI agent camps. People can pick one or more:
 
@@ -16,3 +16,4 @@ The app also includes a lightweight follow-up prompt: "Why? Explain the read."
 `alternatives.html` shows three visual directions side by side: Compass, Road Signs, and Odds Board.
 
 The root app now uses a tappable 2x2 quadrant with market-style actions: All In, Short, Hedge, and Switch.
+It includes three card layout alternatives: Full Mix, Signs Only, and Odds Only.
