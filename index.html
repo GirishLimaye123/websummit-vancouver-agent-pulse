@@ -1031,7 +1031,7 @@
 
     .chip-row {
       display: grid;
-      grid-template-columns: minmax(118px, .82fr) minmax(120px, 1fr) 68px;
+      grid-template-columns: minmax(118px, .82fr) minmax(120px, 1fr) 74px;
       gap: 10px;
       align-items: center;
     }
@@ -1055,9 +1055,10 @@
       accent-color: var(--accent);
     }
 
-    .chip-count {
+    .chip-number {
       justify-self: end;
-      min-width: 56px;
+      width: 74px;
+      min-height: 34px;
       padding: 5px 7px;
       border: 1px solid rgba(248, 234, 210, .24);
       border-radius: 7px;
@@ -1066,6 +1067,16 @@
       font-size: 12px;
       font-weight: 1000;
       text-align: center;
+      outline: none;
+    }
+
+    .chip-number:focus {
+      box-shadow: 0 0 0 3px rgba(248, 234, 210, .24);
+    }
+
+    .chip-number::-webkit-outer-spin-button,
+    .chip-number::-webkit-inner-spin-button {
+      margin: 0;
     }
 
     .switch-panel {
@@ -1326,8 +1337,9 @@
         grid-template-columns: 1fr;
       }
 
-      .chip-count {
+      .chip-number {
         justify-self: stretch;
+        width: 100%;
       }
 
       .map-dot {
@@ -1410,7 +1422,7 @@
                   </span>
                   <span class="camp-meta">
                     <span class="camp-name">Dario camp</span>
-                    <span class="market-action">All In</span>
+                    <span class="market-action">BUY</span>
                   </span>
                 </span>
                 <span class="camp-visual" aria-hidden="true">
@@ -1460,7 +1472,7 @@
 
         <section class="response-dock" aria-label="Response controls">
           <section class="bet-panel" aria-label="100-chip bet split">
-            <div class="bet-head"><span>100-chip bet split</span><small>Tap all-in or rebalance.</small></div>
+            <div class="bet-head"><span>100-chip bet split</span><small>Exact 100 chips.</small></div>
             <div class="chip-stack" id="chipStack" aria-hidden="true"></div>
             <div class="chip-controls" id="chipControls"></div>
           </section>
@@ -1604,7 +1616,7 @@
       els.total.innerHTML = `${totalResponses}<span>responses captured</span>`;
     }
 
-    function renderBetSplit() {
+    function renderChipStack() {
       const chips = [];
       camps.forEach(camp => {
         for (let i = 0; i < state.allocation[camp.id]; i += 1) {
@@ -1612,11 +1624,25 @@
         }
       });
       els.chipStack.innerHTML = chips.join("");
+    }
+
+    function syncChipControls() {
+      camps.forEach(camp => {
+        const value = state.allocation[camp.id] || 0;
+        const slider = els.chipControls.querySelector(`[data-chip-slider="${camp.id}"]`);
+        const number = els.chipControls.querySelector(`[data-chip-number="${camp.id}"]`);
+        if (slider) slider.value = value;
+        if (number) number.value = value;
+      });
+    }
+
+    function renderBetSplit() {
+      renderChipStack();
       els.chipControls.innerHTML = camps.map(camp => `
         <div class="chip-row" style="--accent:${camp.accent}">
           <button class="chip-all" type="button" data-chip-all="${camp.id}">${camp.label}</button>
           <input class="chip-slider" type="range" min="0" max="100" value="${state.allocation[camp.id]}" data-chip-slider="${camp.id}" aria-label="${camp.label} chip allocation">
-          <span class="chip-count">${state.allocation[camp.id]}</span>
+          <input class="chip-number" type="number" inputmode="numeric" min="0" max="100" step="1" value="${state.allocation[camp.id]}" data-chip-number="${camp.id}" aria-label="${camp.label} chips">
         </div>
       `).join("");
       els.chipControls.querySelectorAll("[data-chip-all]").forEach(button => {
@@ -1625,13 +1651,21 @@
       els.chipControls.querySelectorAll("[data-chip-slider]").forEach(slider => {
         slider.addEventListener("input", () => setCampChips(slider.dataset.chipSlider, Number(slider.value)));
       });
+      els.chipControls.querySelectorAll("[data-chip-number]").forEach(input => {
+        input.addEventListener("focus", event => event.target.select());
+        input.addEventListener("change", () => setCampChips(input.dataset.chipNumber, Number(input.value)));
+        input.addEventListener("keydown", event => {
+          if (event.key === "Enter") event.target.blur();
+        });
+      });
     }
 
     function setAllChips(id) {
       state.allocation = Object.fromEntries(camps.map(camp => [camp.id, camp.id === id ? 100 : 0]));
       selectedCamps = new Set([id]);
       saveState();
-      renderBetSplit();
+      renderChipStack();
+      syncChipControls();
       markSelected();
       const camp = camps.find(item => item.id === id);
       flash(`${camp.label}: 100 chips.`);
@@ -1639,28 +1673,34 @@
 
     function setCampChips(id, value) {
       const target = Math.max(0, Math.min(100, Math.round(value)));
-      const others = camps.filter(camp => camp.id !== id);
-      const otherTotal = others.reduce((sum, camp) => sum + (state.allocation[camp.id] || 0), 0);
-      const remaining = 100 - target;
-      const next = { [id]: target };
-      let running = target;
+      const next = { ...state.allocation, [id]: target };
+      let total = camps.reduce((sum, camp) => sum + (next[camp.id] || 0), 0);
 
-      others.forEach((camp, index) => {
-        let share;
-        if (index === others.length - 1) {
-          share = Math.max(0, 100 - running);
-        } else if (otherTotal === 0) {
-          share = Math.floor(remaining / others.length);
-        } else {
-          share = Math.round(((state.allocation[camp.id] || 0) / otherTotal) * remaining);
-        }
-        next[camp.id] = share;
-        running += share;
-      });
+      if (total > 100) {
+        let overflow = total - 100;
+        camps
+          .filter(camp => camp.id !== id)
+          .reverse()
+          .forEach(camp => {
+            if (overflow <= 0) return;
+            const take = Math.min(next[camp.id] || 0, overflow);
+            next[camp.id] = (next[camp.id] || 0) - take;
+            overflow -= take;
+          });
+      } else if (total < 100) {
+        const index = camps.findIndex(camp => camp.id === id);
+        const recipients = [
+          ...camps.slice(index + 1),
+          ...camps.slice(0, index)
+        ].filter(camp => camp.id !== id);
+        const recipient = recipients[0] || camps.find(camp => camp.id !== id) || camps[0];
+        next[recipient.id] = (next[recipient.id] || 0) + (100 - total);
+      }
 
       state.allocation = sanitizeAllocation(next);
       saveState();
-      renderBetSplit();
+      renderChipStack();
+      syncChipControls();
     }
 
     function toggleCamp(id) {
