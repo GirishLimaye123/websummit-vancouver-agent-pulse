@@ -778,8 +778,7 @@
       text-align: center;
     }
 
-    .axis-end,
-    .y-axis span {
+    .axis-end {
       color: rgba(248, 234, 210, .72);
       font-size: 9.5px;
       font-weight: 950;
@@ -801,8 +800,7 @@
       color: rgba(23, 23, 23, .78);
     }
 
-    .camp-axis-frame .axis-end,
-    .camp-axis-frame .y-axis span {
+    .camp-axis-frame .axis-end {
       color: rgba(23, 23, 23, .68);
     }
 
@@ -833,6 +831,11 @@
       align-self: center;
       justify-self: center;
       color: rgba(248, 234, 210, .82);
+      font-size: 12px;
+      font-weight: 1000;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      line-height: 1;
       position: absolute;
       top: 50%;
       left: 42%;
@@ -848,14 +851,18 @@
       align-self: start;
     }
 
-    .y-axis span:last-child {
+    .y-axis .axis-end:last-child {
       align-self: end;
       color: rgba(248, 234, 210, .82);
     }
 
-    .camp-axis-frame .y-axis span,
-    .camp-axis-frame .y-axis span:last-child {
+    .camp-axis-frame .y-axis .axis-end,
+    .camp-axis-frame .y-axis .axis-end:last-child {
       color: rgba(23, 23, 23, .68);
+    }
+
+    .camp-axis-frame .y-axis-title {
+      color: rgba(23, 23, 23, .78);
     }
 
     .map-dot {
@@ -1285,12 +1292,7 @@
         width: 100%;
       }
 
-      .axis-end,
-      .y-axis span {
-        font-size: 7.5px;
-      }
-
-      .y-axis-title {
+      .axis-end {
         font-size: 7.5px;
       }
 
