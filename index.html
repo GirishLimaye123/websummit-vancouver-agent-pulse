@@ -1649,7 +1649,8 @@
         `;
         els.bars.appendChild(row);
       });
-      els.total.innerHTML = `${totalResponses}<span>responses captured</span>`;
+      const totalLabel = visibleTally.source === "local" ? "this device only" : "live responses";
+      els.total.innerHTML = `${totalResponses}<span>${totalLabel}</span>`;
     }
 
     function renderChipStack() {
@@ -1967,6 +1968,7 @@
 
     renderBars();
     renderBetSplit();
+    refreshLiveTally().catch(() => {});
   </script>
 </body>
 </html>
